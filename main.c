@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
     yyin = fp;
 
     fprintf(stdout, "Opening: %s\n", argv[i]);
-    
+
     int ntoken;
 
 
@@ -40,8 +40,8 @@ int main(int argc, char *argv[]) {
     treeprint(root, 0);
 
     rootCpy = root;
-    initGlobal();
-    populateSymbolTable(rootCpy);
+    //initGlobal();
+    //populateSymbolTable(rootCpy);
 
 
 

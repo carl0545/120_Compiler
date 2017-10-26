@@ -1,0 +1,6 @@
+*.o
+120
+120gram.c
+120gram.h
+120lex.c
+y.output

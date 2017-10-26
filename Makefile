@@ -8,16 +8,16 @@ all: 120
 .c.o:
 	$(CC) -c $<
 
-120: main2.o 120gram.o 120lex.o tree.o hash.o symtable.o list.o
-	$(CC) -o 120 main2.o 120gram.o 120lex.o tree.o hash.o symtable.o list.o
+120: main.o 120gram.o 120lex.o tree.o hash.o symtable.o list.o
+	$(CC) -o 120 main.o 120gram.o 120lex.o tree.o hash.o symtable.o list.o
 
 120gram.c 120gram.h: 120gram.y
 	$(YACC) -dt --verbose 120gram.y
 	mv -f y.tab.c 120gram.c
 	mv -f y.tab.h 120gram.h
 
-main2.o: main2.c
-	$(CC) $(CFLAGS) main2.c
+main.o: main.c
+	$(CC) $(CFLAGS) main.c
 
 120lex.c: 120lex.l
 	$(LEX) -t 120lex.l >120lex.c
