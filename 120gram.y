@@ -685,7 +685,7 @@ extern int typenametable_lookup(char *s);
 
  conditional_expression:
       logical_or_expression           { $$ = createTreeNode(conditional_expression, 1, $1); }
-    | logical_or_expression QUEST expression COLON assignment_expression           { $$ = createTreeNode(conditional_expression, 5, $1, $2, $3, $4, $5); }
+    | logical_or_expression QUEST expression COLON assignment_expression  { $$ = createTreeNode(conditional_expression, 5, $1, $2, $3, $4, $5); }
     ;
 
 

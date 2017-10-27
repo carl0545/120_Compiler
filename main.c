@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-//#include "ytab.h"
 #include "tree.h"
 #include "symtable.h"
+#include "type.h"
 
 extern int yyparse();
 extern int yylex();
@@ -31,17 +31,17 @@ int main(int argc, char *argv[]) {
 
     fprintf(stdout, "Opening: %s\n", argv[i]);
 
-    int ntoken;
-
-
-    //ntoken = yylex();
-    //printf("test2");
-    ntoken = yyparse();
+    yyparse();
     treeprint(root, 0);
 
+    fprintf(stdout, "Populating Symbol Table...\n");
     rootCpy = root;
-    //initGlobal();
-    //populateSymbolTable(rootCpy);
+    initGlobal();
+    populateSymbolTable(rootCpy);
+
+    fprintf(stdout, "Performing Type Checking...\n");
+    init_type();
+    type_check(rootCpy);
 
 
 
