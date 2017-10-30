@@ -11,17 +11,14 @@ int trex = 9;
 int main(){
 
 int x = 9;
-int y;
-y = x;
+int y = 9;
+int z = 8;
+int a = 3;
+int q = 8;
+
+int test;
 
 
-
-}
-
-
-/*
-int water(double, int*, char, int){
-  //int fur;
+test = x + y + z + a * z / q * y;
 
 }
-*/

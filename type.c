@@ -33,35 +33,89 @@ void type_express_state(struct tree *parseT){
   switch(productRule){
     case assignment_expression:
       printf("Entering assignment_expression\n");
-      type_assign_exp(parseT);
+
+      if(parseT->kids[2]->prodrule > 0){
+        printf("Single assignment\n");
+        type_assign_exp(parseT);
+      }
+      else{
+        printf("multiple assignment\n");
+        type_mult_assign_exp(parseT);
+      }
   }
 
 
 }
 
+void type_mult_assign_exp(struct tree *parseT){
+  struct type120 *left;
+
+  left = ht_get(currScope, parseT->kids[0]->leaf->text);
+
+  mult_helper(parseT->kids[2], left);
+
+}
+
+void mult_helper(struct tree *parseT, struct type120 *left){
+  int count;
+  struct tree *iter;
+
+  count = 0;
+  iter = parseT;
+  while(iter->prodrule < 0){
+    count++;
+    iter = iter->kids[0];
+  }
+
+
+  for(int i = 0; i < count; i++){
+    iter = parseT;
+
+    for(int k = i; k < count-1; k++){
+      iter = iter->kids[0];
+    }
+
+
+    if(i == 0){
+      type_compare(left, ht_get(currScope, iter->kids[0]->leaf->text));
+    }
+
+    if(iter->kids[2]->prodrule > 0){
+      type_compare(left, ht_get(currScope, iter->kids[2]->leaf->text));
+    }
+    else{
+      mult_helper(parseT->kids[2], left);
+    }
+
+  }
+
+}
+
 void type_assign_exp(struct tree *parseT){
     struct type120 *left, *right;
-    int leftT, rightT;
+
 
     left = ht_get(currScope, parseT->kids[0]->leaf->text);
     right = ht_get(currScope, parseT->kids[2]->leaf->text);
 
-    leftT = left->base_type;
-    rightT = right->base_type;
+    type_compare(left, right);
+}
+
+void type_compare(struct type120 *type1, struct type120 *type2){
+    int leftT, rightT;
+
+    leftT = type1->base_type;
+    rightT = type2->base_type;
 
     if(rightT == FUNCTION_T){
       printf("We have a function return type\n");
-      rightT = right->u.function.elemtype->base_type;
+      rightT = type2->u.function.elemtype->base_type;
     }
 
     if(leftT != rightT){
       fprintf(stderr, "Type Error: variable assignment doesn't matched declaration\n");
       exit(3);
     }
-}
-
-void type_compare(struct type120 *type1, struct type120 *type2){
-
 
 }
 
