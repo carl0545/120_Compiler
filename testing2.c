@@ -19,6 +19,8 @@ int q = 8;
 int test;
 
 
-test = x + y + z + a * z / q * y;
+if(x > y){
+  
+}
 
 }

@@ -47,7 +47,7 @@
 #include <stdlib.h>
 #include "tree.h"
 #include "nonterms.h"
-//#include "token.h
+
 
 extern int lineno;
 extern char *yytext;
@@ -61,15 +61,10 @@ extern int yylex(void);
 extern int typenametable_insert(char *s, int cat);
 extern int typenametable_lookup(char *s);
 
-/*
- * warning, this %union is not what you need, it is for demonstration purposes.
- */
 %}
 %union {
   struct tree *node;
-  //token *toke;
-
-  }
+}
 
   %token <node> ELLIPSIS
   %token <node> ALIGNAS
