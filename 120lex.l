@@ -215,7 +215,7 @@ stringtext				([^"])|(\\.)
 "wchar_t"				{ return createtoken(WCHAR_T); }
 "while"					{ return createtoken(WHILE); }
 
-[a-zA-Z_][a-zA-Z_0-9]*			{ return createtoken(IDENTIFIER); }
+[a-zA-Z_][a-zA-Z_0-9]*			{ return createtoken(check_identifier(yytext)); }
 
 "0"[xX][0-9a-fA-F]+{intsuffix}?		{ return createtoken(ICON); }
 "0"[0-7]+{intsuffix}?			{ return createtoken(ICON); }
