@@ -39,9 +39,13 @@ int main(int argc, char *argv[]) {
     initGlobal();
     populateSymbolTable(rootCpy);
 
+
+
+/*
     fprintf(stdout, "Performing Type Checking...\n");
     init_type();
     type_check(rootCpy);
+    */
 
 
 

@@ -248,6 +248,8 @@ char *humanreadable(int prod){
  return "declarator";
  case -94000 :
  return "direct_declarator";
+ case -94001 :
+ return "direct_declarator";
  case -95000 :
  return "ptr_operator";
  case -96000 :

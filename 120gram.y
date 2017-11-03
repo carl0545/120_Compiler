@@ -1018,7 +1018,7 @@ extern int typenametable_lookup(char *s);
     | direct_declarator LP parameter_declaration_clause RP exception_specification           { $$ = createTreeNode(direct_declarator, 5, $1, $2, $3, $4, $5); }
     | direct_declarator LP parameter_declaration_clause RP           { $$ = createTreeNode(direct_declarator, 4, $1, $2, $3, $4); }
     | CLASS_NAME LP parameter_declaration_clause RP           { $$ = createTreeNode(direct_declarator, 4, $1, $2, $3, $4); }
-    | CLASS_NAME COLONCOLON declarator_id LP parameter_declaration_clause RP           { $$ = createTreeNode(direct_declarator, 6, $1, $2, $3, $4, $5, $6); }
+    | CLASS_NAME COLONCOLON declarator_id LP parameter_declaration_clause RP           { $$ = createTreeNode(direct_declarator-1, 6, $1, $2, $3, $4, $5, $6); }
     | CLASS_NAME COLONCOLON CLASS_NAME LP parameter_declaration_clause RP           { $$ = createTreeNode(direct_declarator, 6, $1, $2, $3, $4, $5, $6); }
     | direct_declarator LB constant_expression_opt RB           { $$ = createTreeNode(direct_declarator, 4, $1, $2, $3, $4); }
     | LP declarator RP           { $$ = createTreeNode(direct_declarator, 3, $1, $2, $3); }

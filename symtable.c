@@ -28,6 +28,7 @@ void populateSymbolTable(struct tree *parseT){
       handle_func_def(parseT);
       return;
     case simple_declaration:{
+
         if(parseT->kids[0]->prodrule == class_specifier){
 
           handle_class_spec(parseT->kids[0]);
@@ -38,6 +39,7 @@ void populateSymbolTable(struct tree *parseT){
 
           return;
         }
+
         handle_init_decl(parseT);
       }
 
@@ -153,7 +155,7 @@ void handle_c_func_decl(struct tree *parseT){
     struct type120 *param = malloc(sizeof(struct type120));
     funcVar->u.function.parameters = malloc(sizeof(struct listnode));
 
-    if(parseT->kids[0]->kids[1]->kids[2]->kids[1]->prodrule == abstract_declarator){
+    if(parseT->kids[0]->kids[1]->kids[2]->kids[1] != NULL){
       param->pointer = true;
     }
     else{
@@ -287,6 +289,80 @@ struct hashtable_s *oldScope = curr;
   //exit(1);
 }
 
+void handle_c_func_def(struct tree *parseT, bool pointer){
+  struct tree *checker;
+
+  if(pointer == true){
+    checker = parseT->kids[1]->kids[1];
+  }
+  else{
+    checker = parseT->kids[1];
+  }
+
+  //check if definition return type and parameters match
+  struct type120 *checkDec, *checkDefin;
+  checkDefin = malloc(sizeof(struct type120));
+  checkDefin->base_type = CLASS_T;
+
+  if(pointer == true){
+    checkDefin->pointer = true;
+  }
+  else{
+    checkDefin->pointer = true;
+  }
+
+  //FINISH IMPLEMNTING later
+
+
+  //Enter the function scope, change scope of curr and recursive call populate symtable
+  //exit with changing curr back to global
+
+  struct hashtable_s *newFuncScope = ht_create(FUNCTIONSIZE, curr);
+  struct hashtable_s *oldScope;
+  struct hashtable_s *classScope;
+  struct tree *newFuncTree;
+  struct type120 *funct;
+
+
+  classScope = ht_get(curr, checker->kids[0]->leaf->text)->u.class.private;
+
+
+  funct = ht_get(classScope, checker->kids[2]->leaf->text);
+
+  oldScope = curr;
+
+
+  if(parseT->kids[3]->prodrule == compound_statement){
+    newFuncTree = parseT->kids[3];
+  }
+  else{
+    fprintf(stderr, "ERROR IN handle_c_func_def\n");
+    exit(3);
+  }
+
+  funct->u.function.sources = ht_create(FUNCTIONSIZE, curr);
+
+  //something is wrong with this
+  curr = funct->u.function.sources;
+
+
+
+
+  int k;
+  for(k = 0; k < newFuncTree->nkids; k++){
+    printf("We're here\n");
+    printf("TESTING: %d\n", newFuncTree->kids[k]->prodrule);
+    populateSymbolTable(newFuncTree->kids[k]);
+
+  }
+
+  curr = oldScope;
+
+
+
+
+}
+
 /*
 *Handle function defintions
 */
@@ -302,6 +378,17 @@ void handle_func_def(struct tree *parseT){
   else{
     //printf("FUNCTION definition return doesn't have pointer\n");
     pointerCheck = false;
+  }
+
+
+  if(pointerCheck == false && parseT->kids[1]->prodrule == direct_declarator-1){
+    handle_c_func_def(parseT, pointerCheck);
+    return;
+  }
+
+  if(pointerCheck == true && parseT->kids[1]->kids[1]->prodrule == direct_declarator-1){
+    handle_c_func_def(parseT, pointerCheck);
+    return;
   }
 
 
@@ -421,7 +508,7 @@ void handle_func_def(struct tree *parseT){
     newFuncTree = parseT->kids[2];
   }
   else{
-    //printf("I'm NOT in compund statement\n");
+    fprintf(stderr, "ERROR IN handle_func_def\n");
     exit(3);
   }
   funct->u.function.sources = ht_create(FUNCTIONSIZE, curr);
@@ -514,17 +601,24 @@ void handle_init_decl(struct tree *parseT){
   struct type120 *newType;
   newType = malloc(sizeof(struct type120));
   //Variable Declaration
-  if(parseT->kids[1]->kids[0]->leafCheck == 1){
+
+  if(parseT->kids[1]->kids[0]->prodrule > 0){
     newType->base_type = find_base_type(parseT->kids[0]->leaf->category);
     //check if pointer;
+
     newType->pointer = false;
+
+    if(curr == NULL){
+      printf("FOUND IT\n");
+    }
+
     ht_set(curr, parseT->kids[1]->kids[0]->leaf->text, newType);
     //printf("adding a variable\n");
 
     return;
   }
   //Function Declaration/Array Declaration
-  else if(parseT->kids[1]->kids[0]->leafCheck == 0){
+  else if(parseT->kids[1]->kids[0]->prodrule < 0){
     //fprintf(stderr, "THIS IS A FUNCTION/ARRAY DECLARATOR\n");
     //printf("CHECK; %s\n", humanreadable(parseT->kids[1]->kids[0]->prodrule));
     //check for pointer
@@ -714,7 +808,7 @@ void handle_func_decl(struct tree *parseT, struct type120 *type, bool pointer, b
 
   }
   else{
-    fprintf(stderr, "%s\n", "Semantic Error" );
+    fprintf(stderr, "%s\n", "Semantic Error");
     exit(3);
   }
 
