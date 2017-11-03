@@ -5,9 +5,9 @@ int fur, furry, bed;
 
 int cat = 0;
 int trex = 9;
-
-int y();
 */
+int func();
+
 
 /*
 class Rectangle{
@@ -15,8 +15,8 @@ class Rectangle{
     int x(int);
 
 };
-
 */
+
 
 int main(){
 
@@ -37,8 +37,9 @@ int q = 8;
 
 int test;
 
-test = q + a + z + z;
+test = q;
 
+test = func();
 
 /*
 if(x > y){
@@ -48,6 +49,11 @@ if(x > y){
 
 }
 
+
+int func(){
+
+  return 0;
+}
 
 
 /*

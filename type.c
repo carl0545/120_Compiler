@@ -39,6 +39,10 @@ void type_express_state(struct tree *parseT){
         printf("Single assignment\n");
         type_assign_exp(parseT);
       }
+      else if(parseT->kids[2]->prodrule == postfix_expression){
+        printf("I'm in a postfix_expression\n");
+        type_postfix_exp(parseT);
+      }
       else{
         printf("multiple assignment\n");
         type_mult_assign_exp(parseT);
@@ -46,6 +50,15 @@ void type_express_state(struct tree *parseT){
   }
 
 
+}
+
+void type_postfix_exp(struct tree *parseT){
+  struct type120 *left, *right;
+
+  left = ht_get(currScope, parseT->kids[0]->leaf->text);
+  right = ht_get(currScope, parseT->kids[2]->kids[0]->leaf->text);
+
+  type_compare(-1, left, right);
 }
 
 void type_mult_assign_exp(struct tree *parseT){
@@ -117,6 +130,7 @@ void type_compare(int operand, struct type120 *type1, struct type120 *type2){
       fprintf(stderr, "Type Error: variable assignment doesn't matched declaration\n");
       exit(3);
     }
+
 
     switch(operand){
       case -1: //no operand, simple assignment
