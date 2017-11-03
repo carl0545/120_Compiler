@@ -1,6 +1,7 @@
 #include "type.h"
 #include "nonterms.h"
 #include "120gram.h"
+#include "symtable.h"
 
 
 void type_check(struct tree *parseT){
@@ -77,11 +78,11 @@ void mult_helper(struct tree *parseT, struct type120 *left){
 
 
     if(i == 0){
-      type_compare(left, ht_get(currScope, iter->kids[0]->leaf->text));
+      type_compare(iter->kids[1]->prodrule, left, ht_get(currScope, iter->kids[0]->leaf->text));
     }
 
     if(iter->kids[2]->prodrule > 0){
-      type_compare(left, ht_get(currScope, iter->kids[2]->leaf->text));
+      type_compare(iter->kids[1]->prodrule, left, ht_get(currScope, iter->kids[2]->leaf->text));
     }
     else{
       mult_helper(parseT->kids[2], left);
@@ -98,11 +99,11 @@ void type_assign_exp(struct tree *parseT){
     left = ht_get(currScope, parseT->kids[0]->leaf->text);
     right = ht_get(currScope, parseT->kids[2]->leaf->text);
 
-    type_compare(left, right);
+    type_compare(-1, left, right);
 }
 
-void type_compare(struct type120 *type1, struct type120 *type2){
-    int leftT, rightT;
+void type_compare(int operand, struct type120 *type1, struct type120 *type2){
+    enum types leftT, rightT;
 
     leftT = type1->base_type;
     rightT = type2->base_type;
@@ -115,6 +116,56 @@ void type_compare(struct type120 *type1, struct type120 *type2){
     if(leftT != rightT){
       fprintf(stderr, "Type Error: variable assignment doesn't matched declaration\n");
       exit(3);
+    }
+
+    switch(operand){
+      case -1: //no operand, simple assignment
+        return;
+      case MINUS:
+        if(leftT == INT_T || leftT == DOUBLE_T){
+
+        }
+        else{
+          fprintf(stderr, "Type Error: Operator/Operand error\n");
+          fprintf(stderr, "Operator: %d Operand: %d\n", leftT, operand);
+          exit(3);
+        }
+      case PLUS:
+        if(leftT == INT_T || leftT == DOUBLE_T){
+
+        }
+        else{
+          fprintf(stderr, "Type Error: Operator/Operand error\n");
+          fprintf(stderr, "Operator: %d Operand: %d\n", leftT, operand);
+          exit(3);
+        }
+      case MUL:
+        if(leftT == INT_T || leftT == DOUBLE_T){
+
+        }
+        else{
+          fprintf(stderr, "Type Error: Operator/Operand error\n");
+          fprintf(stderr, "Operator: %d Operand: %d\n", leftT, operand);
+          exit(3);
+        }
+      case DIV:
+        if(leftT == INT_T || leftT == DOUBLE_T){
+
+        }
+        else{
+          fprintf(stderr, "Type Error: Operator/Operand error\n");
+          fprintf(stderr, "Operator: %d Operand: %d\n", leftT, operand);
+          exit(3);
+        }
+      case MOD:
+        if(leftT == INT_T || leftT == DOUBLE_T){
+
+        }
+        else{
+          fprintf(stderr, "Type Error: Operator/Operand error\n");
+          fprintf(stderr, "Operator: %d Operand: %d\n", leftT, operand);
+          exit(3);
+        }
     }
 
 }

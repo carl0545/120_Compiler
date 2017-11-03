@@ -20,6 +20,6 @@ void type_assign_exp(struct tree*);// handles assignment_expression product rule
 void type_mult_assign_exp(struct tree*);//handles assignment_expression product rule with multiple right hand side assignments
 void mult_helper(struct tree*, struct type120*); //helper function for type_mult_assign_exp
 
-void type_compare(struct type120*, struct type120*); //checks to see if two types are the same
+void type_compare(int operand, struct type120*, struct type120*); //checks to see if two types are the same
 
 #endif

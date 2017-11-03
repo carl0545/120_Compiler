@@ -41,11 +41,11 @@ int main(int argc, char *argv[]) {
 
 
 
-/*
+
     fprintf(stdout, "Performing Type Checking...\n");
     init_type();
     type_check(rootCpy);
-    */
+    
 
 
 

@@ -185,7 +185,7 @@ struct type120 *ht_get(struct hashtable_s *hashtable, char *key){
       return ht_get(hashtable->parent, key);
     }
     else{
-        fprintf(stderr, "ht_get returning NULL\n");
+        //fprintf(stderr, "ht_get returning NULL\n");
 		    return NULL;
     }
 
