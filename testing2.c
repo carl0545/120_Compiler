@@ -6,7 +6,7 @@ int fur, furry, bed;
 int cat = 0;
 int trex = 9;
 */
-int func();
+double func();
 
 
 /*
@@ -37,7 +37,7 @@ int q = 8;
 
 int test;
 
-test = q;
+test = func() + q + q + z;
 
 test = func();
 
@@ -50,7 +50,7 @@ if(x > y){
 }
 
 
-int func(){
+double func(){
 
   return 0;
 }

@@ -91,10 +91,18 @@ void mult_helper(struct tree *parseT, struct type120 *left){
 
 
     if(i == 0){
-      type_compare(iter->kids[1]->prodrule, left, ht_get(currScope, iter->kids[0]->leaf->text));
+      if(iter->kids[0]->prodrule == postfix_expression){
+        mult_postfix_helper(iter->kids[0], left, iter->kids[1]->prodrule);
+      }
+      else{
+        type_compare(iter->kids[1]->prodrule, left, ht_get(currScope, iter->kids[0]->leaf->text));
+      }
     }
 
-    if(iter->kids[2]->prodrule > 0){
+    if(iter->kids[2]->prodrule == postfix_expression){
+        mult_postfix_helper(iter->kids[2], left, iter->kids[1]->prodrule);
+    }
+    else if(iter->kids[2]->prodrule > 0){
       type_compare(iter->kids[1]->prodrule, left, ht_get(currScope, iter->kids[2]->leaf->text));
     }
     else{
@@ -103,6 +111,14 @@ void mult_helper(struct tree *parseT, struct type120 *left){
 
   }
 
+}
+
+void mult_postfix_helper(struct tree *parseT, struct type120 *left, int oper){
+  struct type120 *right;
+
+  right = ht_get(currScope, parseT->kids[0]->leaf->text);
+
+  type_compare(oper, left, right);
 }
 
 void type_assign_exp(struct tree *parseT){

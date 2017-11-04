@@ -20,6 +20,7 @@ void type_assign_exp(struct tree*);// handles assignment_expression product rule
 void type_postfix_exp(struct tree*);// handles postfix_expression product rule
 void type_mult_assign_exp(struct tree*);//handles assignment_expression product rule with multiple right hand side assignments
 void mult_helper(struct tree*, struct type120*); //helper function for type_mult_assign_exp
+void mult_postfix_helper(struct tree*, struct type120*, int); //helper function for type_mult_assign_exp for postfix_expressions
 
 void type_compare(int operand, struct type120*, struct type120*); //checks to see if two types are the same
 
