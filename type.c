@@ -15,9 +15,17 @@ void type_check(struct tree *parseT){
     case function_definition-1:
       printf("%s\n", "I'm in a function_definition");
       scope_change(parseT);
+      break;
     case expression_statement:
       printf("I'm in an expression statement\n");
       type_express_state(parseT->kids[0]);
+      break;
+    case relational_expression:
+      type_relational_express(parseT);
+      break;
+    case unary_expression;
+      type_unary_express(parseT):
+      break;
 
   }
 
@@ -25,6 +33,19 @@ void type_check(struct tree *parseT){
   for(int i = 0; i < parseT->nkids; i++){
     type_check(parseT->kids[i]);
   }
+
+}
+void type_unary_express(struct tree*){
+
+}
+
+void type_relational_express(struct tree *parseT){
+  struct type120 *left, *right;
+  printf("we made it here\n");
+  left = ht_get(currScope, parseT->kids[0]->leaf->text);
+  right = ht_get(currScope, parseT->kids[2]->leaf->text);
+
+  type_compare(parseT->kids[1]->prodrule, left, right);
 
 }
 
@@ -160,6 +181,7 @@ void type_compare(int operand, struct type120 *type1, struct type120 *type2){
           fprintf(stderr, "Operator: %d Operand: %d\n", leftT, operand);
           exit(3);
         }
+        break;
       case PLUS:
         if(leftT == INT_T || leftT == DOUBLE_T){
 
@@ -169,6 +191,7 @@ void type_compare(int operand, struct type120 *type1, struct type120 *type2){
           fprintf(stderr, "Operator: %d Operand: %d\n", leftT, operand);
           exit(3);
         }
+        break;
       case MUL:
         if(leftT == INT_T || leftT == DOUBLE_T){
 
@@ -178,6 +201,7 @@ void type_compare(int operand, struct type120 *type1, struct type120 *type2){
           fprintf(stderr, "Operator: %d Operand: %d\n", leftT, operand);
           exit(3);
         }
+        break;
       case DIV:
         if(leftT == INT_T || leftT == DOUBLE_T){
 
@@ -187,6 +211,7 @@ void type_compare(int operand, struct type120 *type1, struct type120 *type2){
           fprintf(stderr, "Operator: %d Operand: %d\n", leftT, operand);
           exit(3);
         }
+        break;
       case MOD:
         if(leftT == INT_T || leftT == DOUBLE_T){
 
@@ -196,6 +221,29 @@ void type_compare(int operand, struct type120 *type1, struct type120 *type2){
           fprintf(stderr, "Operator: %d Operand: %d\n", leftT, operand);
           exit(3);
         }
+        break;
+      case LT:
+        if(leftT == INT_T || leftT == DOUBLE_T){
+
+        }
+        else{
+          fprintf(stderr, "Type Error: Operator/Operand error\n");
+          fprintf(stderr, "Operator: %d Operand: %d\n", leftT, operand);
+          exit(3);
+        }
+        break;
+      case GT:
+        if(leftT == INT_T || leftT == DOUBLE_T){
+
+        }
+        else{
+          fprintf(stderr, "Type Error: Operator/Operand error\n");
+          fprintf(stderr, "Operator: %d Operand: %d\n", leftT, operand);
+          exit(3);
+        }
+        break;
+      default:
+        printf("I don't recognize: %d\n", operand);
     }
 
 }

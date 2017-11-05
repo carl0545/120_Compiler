@@ -18,7 +18,9 @@ void type_check(struct tree*); //main recursive call - performs a type check on 
 void type_express_state(struct tree*);// handles expression_statement product rule
 void type_assign_exp(struct tree*);// handles assignment_expression product rule with only one assignment
 void type_postfix_exp(struct tree*);// handles postfix_expression product rule
+void type_unary_express(struct tree*); //handles unary_expression product rule
 void type_mult_assign_exp(struct tree*);//handles assignment_expression product rule with multiple right hand side assignments
+void type_relational_express(struct tree*);//handes relational_expression product rule
 void mult_helper(struct tree*, struct type120*); //helper function for type_mult_assign_exp
 void mult_postfix_helper(struct tree*, struct type120*, int); //helper function for type_mult_assign_exp for postfix_expressions
 

@@ -31,18 +31,18 @@ a = x + y + z;
 
 
 int y = 5;
-int z = 8;
+int z = 6;
 int a = 3;
 int q = 8;
 
 int test;
 
-test = y + 9 + q + z;
+//test = y + 9 + q + z;
 
 
 
 
-if(a > y || q < a){
+if(a > y || q < a && !(a < z)){
 
 }
 
