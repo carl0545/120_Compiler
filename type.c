@@ -26,6 +26,8 @@ void type_check(struct tree *parseT){
     case unary_expression:
       type_unary_express(parseT);
       break;
+    case init_declarator:
+      type_init_declarator(parseT);
 
   }
 
@@ -35,6 +37,24 @@ void type_check(struct tree *parseT){
   }
 
 }
+
+void type_init_declarator(struct tree *parseT){
+  struct type120 *left, *right;
+
+  if(parseT->kids[1] == NULL){
+    return;
+  }
+
+  if(parseT->kids[1]->prodrule != initializer){
+    return;
+  }
+
+  left = ht_get(currScope, parseT->kids[0]->leaf->text);
+  right = ht_get(currScope, parseT->kids[1]->kids[1]->leaf->text);
+
+  type_compare(-1, left, right);
+}
+
 void type_unary_express(struct tree *parseT){
   if(parseT->kids[1]->prodrule == primary_expression){
     return;

@@ -30,10 +30,12 @@ a = x + y + z;
 */
 
 
-int y = 5;
-int z = 6;
+int y;
+int z = 6.6;
 int a = 3;
 int q = 8;
+
+int arr[5];
 
 int test;
 
@@ -42,7 +44,7 @@ int test;
 
 
 
-if(a > y || q < a && !a){
+if(a > y || q < a){
 
 }
 

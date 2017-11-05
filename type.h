@@ -19,6 +19,7 @@ void type_express_state(struct tree*);// handles expression_statement product ru
 void type_assign_exp(struct tree*);// handles assignment_expression product rule with only one assignment
 void type_postfix_exp(struct tree*);// handles postfix_expression product rule
 void type_unary_express(struct tree*); //handles unary_expression product rule
+void type_init_declarator(struct tree*); //handles init_declarator product rule
 void type_mult_assign_exp(struct tree*);//handles assignment_expression product rule with multiple right hand side assignments
 void type_relational_express(struct tree*);//handes relational_expression product rule
 void mult_helper(struct tree*, struct type120*); //helper function for type_mult_assign_exp
