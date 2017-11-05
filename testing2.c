@@ -42,7 +42,7 @@ int test;
 
 
 
-if(a > y || q < a && !(a < z)){
+if(a > y || q < a && !a){
 
 }
 

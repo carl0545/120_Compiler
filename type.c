@@ -23,8 +23,8 @@ void type_check(struct tree *parseT){
     case relational_expression:
       type_relational_express(parseT);
       break;
-    case unary_expression;
-      type_unary_express(parseT):
+    case unary_expression:
+      type_unary_express(parseT);
       break;
 
   }
@@ -35,8 +35,14 @@ void type_check(struct tree *parseT){
   }
 
 }
-void type_unary_express(struct tree*){
-
+void type_unary_express(struct tree *parseT){
+  if(parseT->kids[1]->prodrule == primary_expression){
+    return;
+  }
+  else {
+    fprintf(stderr, "TYPE ERROR: Not (!) operator error\n");
+    exit(3);
+  }
 }
 
 void type_relational_express(struct tree *parseT){
