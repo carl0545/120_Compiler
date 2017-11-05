@@ -11,6 +11,7 @@
 #include <limits.h>
 #include "symtable.h"
 
+
 struct entry_s {
 	char *key;
 	struct type120 *value;

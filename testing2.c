@@ -30,16 +30,16 @@ a = x + y + z;
 */
 
 
-int y = 9;
+int y = 5;
 int z = 8;
 int a = 3;
 int q = 8;
 
 int test;
 
-test = func() + q + q + z;
+test = y + 9.8 + q + z;
 
-test = func();
+
 
 /*
 if(x > y){

@@ -23,10 +23,16 @@ void populateSymbolTable(struct tree *parseT){
       break;
     case expression_statement:
       handle_expr_state(parseT);
-      return;
+      break;
     case function_definition-1:
       handle_func_def(parseT);
       return;
+    case ICON:
+      handle_literal(ICON, parseT);
+      break;
+    case FCON:
+      handle_literal(FCON, parseT);
+      break;
     case simple_declaration:{
 
         if(parseT->kids[0]->prodrule == class_specifier){
@@ -43,11 +49,39 @@ void populateSymbolTable(struct tree *parseT){
         handle_init_decl(parseT);
       }
 
+
   }//end of main switch
 
     for(i = 0; i < parseT->nkids; i++){
       populateSymbolTable(parseT->kids[i]);
     }
+
+}
+
+void handle_literal(int literalE, struct tree *parseT){
+  struct type120 *newType;
+  char* name;
+
+  name = parseT->leaf->text;
+  newType = malloc(sizeof(struct type120));
+
+  newType->pointer = false;
+
+  switch(literalE){
+    case ICON:
+      newType->base_type = INT_T;
+      break;
+    case FCON:
+      newType->base_type = DOUBLE_T;
+      break;
+    default:
+      fprintf(stderr, "ERROR in handle_literal\n");
+      exit(3);
+  }
+
+  if(ht_get(curr, name) == NULL){
+    ht_set(global, name, newType);
+  }
 
 }
 

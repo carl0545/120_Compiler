@@ -154,9 +154,11 @@ void ht_set(struct hashtable_s *hashtable, char *key, struct type120 *value){
 	}
 }
 
+
 struct type120 *ht_get(struct hashtable_s *hashtable, char *key){
   int bin = 0;
 	struct entry_s *pair;
+
 
 	bin = ht_hash( hashtable, key );
   //printf("get hash function returns %d\n", bin);

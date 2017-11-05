@@ -63,6 +63,7 @@ void handle_c_func_decl(struct tree*);
 void handle_c_func_def(struct tree*, bool);
 void handle_init_list(struct tree*);
 void handle_expr_state(struct tree*);
+void handle_literal(int, struct tree*);
 bool checkMain(struct tree*);
 int find_base_type(int);
 bool checkParams(struct listnode **p1, struct listnode **p2);
