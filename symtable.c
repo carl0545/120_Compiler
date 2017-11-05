@@ -21,6 +21,9 @@ void populateSymbolTable(struct tree *parseT){
       //not used
       return;
       break;
+    case IDENTIFIER:
+      handle_identfier(parseT);
+      break;
     case expression_statement:
       handle_expr_state(parseT);
       break;
@@ -58,6 +61,13 @@ void populateSymbolTable(struct tree *parseT){
 
 }
 
+void handle_identfier(struct tree *parseT){
+  if(ht_get(curr, parseT->leaf->text) == NULL){
+    fprintf(stderr, "SEMANTIC ERROR: use of an undeclared var\n");
+    exit(3);
+  }
+}
+
 void handle_literal(int literalE, struct tree *parseT){
   struct type120 *newType;
   char* name;
@@ -73,6 +83,11 @@ void handle_literal(int literalE, struct tree *parseT){
       break;
     case FCON:
       newType->base_type = DOUBLE_T;
+      break;
+    case CCON: //NOT WORKING
+      printf("THIS IS A CHARACTER\n");
+      exit(3);
+      newType->base_type = CHAR_T;
       break;
     default:
       fprintf(stderr, "ERROR in handle_literal\n");

@@ -37,15 +37,15 @@ int q = 8;
 
 int test;
 
-test = y + 9.8 + q + z;
+test = y + 9 + q + z;
 
 
 
-/*
-if(x > y){
+
+if(a > y || q < a){
 
 }
-*/
+
 
 }
 
