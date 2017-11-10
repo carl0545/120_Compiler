@@ -37,8 +37,25 @@ void type_check(struct tree *parseT){
   }
 
 }
+bool arr_check(struct tree *parseT){
+  if(parseT->kids[0] == NULL){
+    return false;
+  }
+  if(parseT->kids[0]->prodrule == direct_declarator || parseT->kids[0]->prodrule == direct_declarator-1){
+    printf("I'M IN AN ARRAY\n");
+    return true;
+  }
+  else{
+    printf("I'm not in an array\n");
+    return false;
+  }
+}
 
 void type_init_declarator(struct tree *parseT){
+  //check if array declaration
+  //arr_check(parseT);
+
+
   struct type120 *left, *right;
 
   if(parseT->kids[1] == NULL){
@@ -75,6 +92,25 @@ void type_relational_express(struct tree *parseT){
 
 }
 
+void type_array_check(struct tree *parseT){
+  struct type120 *arr, *left, *right;
+
+  arr = ht_get(currScope, parseT->kids[0]->kids[0]->leaf->text);
+
+  //array size check
+
+  if(arr->u.array.size <= parseT->kids[0]->kids[2]->leaf->ival){
+    fprintf(stderr, "Array assignment out of bounds\n");
+    exit(3);
+  }
+
+
+  left = arr->u.array.elemtype;
+  right = ht_get(currScope, parseT->kids[2]->leaf->text);
+
+  type_compare(-1, left, right);
+}
+
 void type_express_state(struct tree *parseT){
   int productRule = parseT->prodrule;
 
@@ -82,7 +118,11 @@ void type_express_state(struct tree *parseT){
     case assignment_expression:
       printf("Entering assignment_expression\n");
 
-      if(parseT->kids[2]->prodrule > 0){
+      if(parseT->kids[0]->prodrule == postfix_expression){
+        printf("Array check\n");
+        type_array_check(parseT);
+      }
+      else if(parseT->kids[2]->prodrule > 0){
         printf("Single assignment\n");
         type_assign_exp(parseT);
       }

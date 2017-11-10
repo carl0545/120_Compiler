@@ -105,10 +105,18 @@ void handle_literal(int literalE, struct tree *parseT){
 *
 */
 void handle_expr_state(struct tree *parseT){
+  if(parseT->kids[0]->kids[0]->prodrule == postfix_expression){
+    if(ht_get(curr, parseT->kids[0]->kids[0]->kids[0]->leaf->text) == NULL){
+      fprintf(stderr, "SEMANTIC ERROR: use of an undeclared var\n");
+      exit(3);
+    }
+  }
+  else{
     if(ht_get(curr, parseT->kids[0]->kids[0]->leaf->text) == NULL){
       fprintf(stderr, "SEMANTIC ERROR: use of an undeclared var\n");
       exit(3);
     }
+  }
 }
 
 void handle_init_list(struct tree *parseT){

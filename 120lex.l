@@ -367,13 +367,13 @@ static int createtoken(int cat)
   yylval.node->leaf->lineno = yylineno;
   //printf("HIIIIIIII\n");
   //ival, dval, sval functionality
-  if(cat == 331){
+  if(cat == ICON){
     yylval.node->leaf->ival = atoi(yytext);
   }
-  else if(cat == 333){
+  else if(cat == FCON){
     yylval.node->leaf->dval = atof(yytext);
   }
-  else if(cat == 334){
+  else if(cat == STRING){
     yylval.node->leaf->sval = yytext;
 
   }
