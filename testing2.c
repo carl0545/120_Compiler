@@ -6,7 +6,7 @@ double func();
 
 class Rectangle{
 private:
-  int x();
+  int x(int);
 };
 
 
@@ -41,9 +41,6 @@ int test;
 
 double die = 3.0;
 
-if(2.0 < rect[2].x()){
-
-}
 
 
 }
@@ -55,8 +52,7 @@ double func(){
 }
 
 
-/*
-int* Rectangle::x(int y){
-  int rew = 0;
+
+int Rectangle::x(int y){
+  int q = 0;
 }
-*/

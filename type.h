@@ -24,6 +24,8 @@ void type_array_check(struct tree*); //check an single array assignment
 void type_postfix_exp_2(struct tree*); //handle postfix_expression-2
 void type_mult_assign_exp(struct tree*);//handles assignment_expression product rule with multiple right hand side assignments
 void type_relational_express(struct tree*);//handes relational_expression product rule
+
+struct hashtable_s* scope_c_func_help(struct tree*);//helper for scope change
 struct type120* relation_helper(struct tree*); //helper for relational_expression
 void mult_helper(struct tree*, struct type120*); //helper function for type_mult_assign_exp
 void mult_postfix_helper(struct tree*, struct type120*, int); //helper function for type_mult_assign_exp for postfix_expressions

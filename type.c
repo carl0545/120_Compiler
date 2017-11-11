@@ -432,13 +432,37 @@ void scope_change(struct tree *parseT){
     case declarator:
       printf("I'm in a declarator statement\n");
       newScope = ht_get(currScope, parseT->kids[1]->kids[1]->kids[0]->leaf->text)->u.function.sources;
+      break;
     case direct_declarator:
       printf("I'm in a direct_declarator statement\n");
       newScope = ht_get(currScope, parseT->kids[1]->kids[0]->leaf->text)->u.function.sources;
+      break;
+    case direct_declarator-1:
+      printf("I'M IN THE SECOND direct_declarator\n");
+      newScope = scope_c_func_help(parseT->kids[1]);
+      break;
+    default:
+      fprintf(stderr, "error in scope change\n");
+      exit(3);
   }
 
   currScope = newScope;
 
+}
+
+struct hashtable_s* scope_c_func_help(struct tree *parseT){
+  struct hashtable_s* retScope;
+  struct type120* class_v;
+  struct type120* func_v;
+
+  class_v = ht_get(global, parseT->kids[0]->leaf->text);
+
+  func_v = ht_get(class_v->u.class.private, parseT->kids[2]->leaf->text);
+
+
+  retScope = func_v->u.function.sources;
+
+  return retScope;
 }
 
 void init_type(){
