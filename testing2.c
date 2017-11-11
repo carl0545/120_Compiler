@@ -21,11 +21,11 @@ char a;
 a = x + y + z;
 */
 
-Rectangle rect;
+Rectangle rect[5];
 
 //rect.x();
 int y;
-y = rect.x();
+//y = rect.x();
 int z = 6;
 int a = 3;
 int q = 8;
@@ -41,7 +41,7 @@ int test;
 
 double die = 3.0;
 
-if(2.0 < rect.x()){
+if(2.0 < rect[2].x()){
 
 }
 

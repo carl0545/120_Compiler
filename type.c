@@ -85,12 +85,63 @@ void type_unary_express(struct tree *parseT){
 
 void type_relational_express(struct tree *parseT){
   struct type120 *left, *right;
+  int leftCheck = 0;
+  int rightCheck = 0;
   printf("we made it here\n");
-  left = ht_get(currScope, parseT->kids[0]->leaf->text);
-  right = ht_get(currScope, parseT->kids[2]->leaf->text);
+
+  if(parseT->kids[0]->prodrule == postfix_expression){
+    printf("left is a postfix_expression\n");
+    left = relation_helper(parseT->kids[0]);
+    leftCheck = 1;
+  }
+
+  if(parseT->kids[2]->prodrule == postfix_expression){
+    printf("right is a postfix_expression\n");
+    right = relation_helper(parseT->kids[2]);
+    rightCheck = 1;
+  }
+
+  if(leftCheck == 0){
+    printf("left is null\n");
+    left = ht_get(currScope, parseT->kids[0]->leaf->text);
+  }
+
+  if(rightCheck == 0){
+    printf("right is null\n");
+    right = ht_get(currScope, parseT->kids[2]->leaf->text);
+  }
+
 
   type_compare(parseT->kids[1]->prodrule, left, right);
 
+}
+
+struct type120* relation_helper(struct tree *parseT){
+  struct type120 *class_v, *member_v;
+  struct hashtable_s *tempScope;
+  int arrFlag = 0;
+
+  if(parseT->kids[0]->kids[0]->prodrule == postfix_expression){
+    arrFlag = 1;
+  }
+
+  if(arrFlag == 1){
+    class_v = ht_get(currScope, parseT->kids[0]->kids[0]->kids[0]->leaf->text);
+  }
+  else{
+    class_v = ht_get(currScope, parseT->kids[0]->kids[0]->leaf->text);
+  }
+
+  if(arrFlag == 1){
+    tempScope = class_v->u.array.elemtype->u.class.private;
+  }
+  else{
+    tempScope = class_v->u.class.private;
+  }
+
+  member_v = ht_get(tempScope, parseT->kids[0]->kids[2]->leaf->text);
+
+  return member_v;
 }
 
 void type_array_check(struct tree *parseT){
@@ -159,7 +210,7 @@ void type_express_state(struct tree *parseT){
 }
 
 void type_postfix_exp_2(struct tree *parseT){
-  //check to see if member call is a part of class scope
+
   struct type120 *class_v, *member_v, *left, *right;
   struct hashtable_s *tempScope;
   int arrFlag = 0;
