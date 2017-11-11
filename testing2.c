@@ -1,21 +1,13 @@
 //using namespace std;
 
-/*
-int fur, furry, bed;
 
-int cat = 0;
-int trex = 9;
-*/
 double func();
 
 
-/*
 class Rectangle{
-  private:
-    int x(int);
-
+private:
+  int x();
 };
-*/
 
 
 int main(){
@@ -29,6 +21,7 @@ char a;
 a = x + y + z;
 */
 
+Rectangle rect;
 
 int y;
 int z = 6;
@@ -42,8 +35,6 @@ arr[4] = 6;
 int test;
 
 //test = y + 9 + q + z;
-
-
 
 
 if(a > y || q < a){

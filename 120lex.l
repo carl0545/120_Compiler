@@ -365,7 +365,7 @@ static int createtoken(int cat)
   strcpy(yylval.node->leaf->text, yytext);
 
   yylval.node->leaf->lineno = yylineno;
-  //printf("HIIIIIIII\n");
+
   //ival, dval, sval functionality
   if(cat == ICON){
     yylval.node->leaf->ival = atoi(yytext);

@@ -895,6 +895,9 @@ int find_base_type(int token){
     case(BOOL):
       return BOOL_T;
       break;
+    case(CLASS_NAME):
+      return CLASS_T;
+      break;
     default:
     //check for defined other types
     fprintf(stderr, "%s\n", "Variable declaration has an unregonized type" );
