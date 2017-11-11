@@ -106,6 +106,8 @@ char *humanreadable(int prod){
  return "nested_name_specifier";
  case -20000 :
  return "postfix_expression";
+ case -20002 :
+ return "postfix_expression";
  case -21000 :
  return "expression_list";
  case -22000 :

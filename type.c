@@ -37,6 +37,7 @@ void type_check(struct tree *parseT){
   }
 
 }
+
 bool arr_check(struct tree *parseT){
   if(parseT->kids[0] == NULL){
     return false;
@@ -127,14 +128,69 @@ void type_express_state(struct tree *parseT){
         type_assign_exp(parseT);
       }
       else if(parseT->kids[2]->prodrule == postfix_expression){
+        if(parseT->kids[2]->kids[0]->prodrule == postfix_expression-2){
+        //  if(parseT->kids[2]->kids[0]->kids[0]->prodrule == postfix_expression){
+        //    printf("I'm in the array postfix_expression\n");
+        //    type_postfix_exp_3(parseT);
+        //  }
+        //  else{
+            printf("I'm in the second postfix_expression\n" );
+            type_postfix_exp_2(parseT);
+        //  }
+        }
+        else{
         printf("I'm in a postfix_expression\n");
         type_postfix_exp(parseT);
+        }
       }
       else{
         printf("multiple assignment\n");
         type_mult_assign_exp(parseT);
       }
+      break;
+    case postfix_expression:
+    //  if(parseT->kids[0]->prodrule == postfix_expression-2){
+    //    type_postfix_exp_2(parseT->kids[0]);
+    //  }
+      break;
   }
+
+
+}
+
+void type_postfix_exp_2(struct tree *parseT){
+  //check to see if member call is a part of class scope
+  struct type120 *class_v, *member_v, *left, *right;
+  struct hashtable_s *tempScope;
+  int arrFlag = 0;
+
+
+  left = ht_get(currScope, parseT->kids[0]->leaf->text);
+  parseT = parseT->kids[2]->kids[0];
+
+  if(parseT->kids[0]->prodrule == postfix_expression){
+    arrFlag = 1;
+  }
+
+  if(arrFlag == 1){
+    class_v = ht_get(currScope, parseT->kids[0]->kids[0]->leaf->text);
+  }
+  else{
+    class_v = ht_get(currScope, parseT->kids[0]->leaf->text);
+  }
+
+  if(arrFlag == 1){
+    tempScope = class_v->u.array.elemtype->u.class.private;
+  }
+  else{
+    tempScope = class_v->u.class.private;
+  }
+
+
+  member_v = ht_get(tempScope, parseT->kids[2]->leaf->text);
+
+  right = member_v->u.function.elemtype;
+  type_compare(-1, left, right);
 
 
 }

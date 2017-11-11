@@ -21,6 +21,8 @@ void populateSymbolTable(struct tree *parseT){
       //not used
       return;
       break;
+    case postfix_expression-2: //class member call
+      return;
     case IDENTIFIER:
       handle_identfier(parseT);
       break;
@@ -66,6 +68,7 @@ void handle_identfier(struct tree *parseT){
     fprintf(stderr, "SEMANTIC ERROR: use of an undeclared var\n");
     exit(3);
   }
+
 }
 
 void handle_literal(int literalE, struct tree *parseT){
@@ -110,6 +113,9 @@ void handle_expr_state(struct tree *parseT){
       fprintf(stderr, "SEMANTIC ERROR: use of an undeclared var\n");
       exit(3);
     }
+  }
+  else if(parseT->kids[0]->kids[0]->prodrule == postfix_expression-2){
+    return;
   }
   else{
     if(ht_get(curr, parseT->kids[0]->kids[0]->leaf->text) == NULL){
@@ -651,6 +657,21 @@ bool checkMain(struct tree *parseT){
   }
 
 }
+
+void class_check(struct type120 *check, struct tree *parseT){
+  if(check->base_type != CLASS_T){
+    return;
+  }
+
+  struct type120 *class_v;
+  class_v = ht_get(curr, parseT->kids[0]->leaf->text);
+
+  check->u.class.private = class_v->u.class.private;
+  check->u.class.type = parseT->kids[0]->leaf->text;
+
+
+}
+
 /*
 *Handle initializing variables and functions
 */
@@ -661,13 +682,11 @@ void handle_init_decl(struct tree *parseT){
 
   if(parseT->kids[1]->kids[0]->prodrule > 0){
     newType->base_type = find_base_type(parseT->kids[0]->leaf->category);
-    //check if pointer;
 
+    class_check(newType, parseT);
+    //check if pointer;
     newType->pointer = false;
 
-    if(curr == NULL){
-      printf("FOUND IT\n");
-    }
 
     ht_set(curr, parseT->kids[1]->kids[0]->leaf->text, newType);
     //printf("adding a variable\n");
@@ -739,6 +758,9 @@ void handle_arr_decl(struct tree* parseT, struct type120* type){
 
   }
   elem->base_type = find_base_type(parseT->kids[0]->leaf->category);
+
+  class_check(elem, parseT);
+
   type->u.array.elemtype = elem;
 
   ht_set(curr, parseT->kids[1]->kids[0]->kids[0]->leaf->text, type);

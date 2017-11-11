@@ -161,6 +161,7 @@ struct type120 *ht_get(struct hashtable_s *hashtable, char *key){
 
 
 	bin = ht_hash( hashtable, key );
+
   //printf("get hash function returns %d\n", bin);
 	/* Step through the bin, looking for our value. */
 	pair = hashtable->table[ bin ];

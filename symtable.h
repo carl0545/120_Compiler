@@ -67,6 +67,7 @@ void handle_literal(int, struct tree*);
 void handle_identfier(struct tree*);
 bool checkMain(struct tree*);
 int find_base_type(int);
+void class_check(struct type120*, struct tree*);
 bool checkParams(struct listnode **p1, struct listnode **p2);
 
 

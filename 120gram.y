@@ -510,7 +510,7 @@ extern int typenametable_lookup(char *s);
     | postfix_expression DOT TEMPLATE COLONCOLON id_expression           { $$ = createTreeNode(postfix_expression, 5, $1, $2, $3, $4, $5); }
     | postfix_expression DOT TEMPLATE id_expression           { $$ = createTreeNode(postfix_expression, 4, $1, $2, $3, $4); }
     | postfix_expression DOT COLONCOLON id_expression           { $$ = createTreeNode(postfix_expression, 4, $1, $2, $3, $4); }
-    | postfix_expression DOT id_expression           { $$ = createTreeNode(postfix_expression, 3, $1, $2, $3); }
+    | postfix_expression DOT id_expression           { $$ = createTreeNode(postfix_expression-2, 3, $1, $2, $3); }
     | postfix_expression FOLLOW TEMPLATE COLONCOLON id_expression           { $$ = createTreeNode(postfix_expression, 5, $1, $2, $3, $4, $5); }
     | postfix_expression FOLLOW TEMPLATE id_expression           { $$ = createTreeNode(postfix_expression, 4, $1, $2, $3, $4); }
     | postfix_expression FOLLOW COLONCOLON id_expression           { $$ = createTreeNode(postfix_expression, 4, $1, $2, $3, $4); }
