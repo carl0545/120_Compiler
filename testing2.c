@@ -1,7 +1,12 @@
 //using namespace std;
+#include <string>
+#include <fstream>
+#include <iostream>
 
+using namespace std;
 
-double func();
+int test();
+int func(int, int, int);
 
 
 class Rectangle{
@@ -21,10 +26,17 @@ char a;
 a = x + y + z;
 */
 
+ifstream stre;
+string str;
+int ari = 9;
+
+cout << "hello" << 4;
+
+
 Rectangle rect[5];
 
 //rect.x();
-int y;
+int y = func(3, 3, 3);
 //y = rect.x();
 int z = 6;
 int a = 3;
@@ -34,7 +46,7 @@ int arr[5];
 
 arr[4] = 6;
 
-int test;
+
 
 //test = y + 9 + q + z;
 
@@ -45,12 +57,15 @@ double die = 3.0;
 
 }
 
-
-double func(){
-
+int test(){
   return 0;
 }
 
+int func(int parem, int parem2, int parem3){
+
+
+  return 0;
+}
 
 
 int Rectangle::x(int y){

@@ -6,6 +6,7 @@
 #include "tree.h"
 #include "hash.h"
 #include "symtable.h"
+#include <string.h>
 
 
 struct hashtable_s *currScope;
@@ -24,11 +25,15 @@ void type_array_check(struct tree*); //check an single array assignment
 void type_postfix_exp_2(struct tree*); //handle postfix_expression-2
 void type_mult_assign_exp(struct tree*);//handles assignment_expression product rule with multiple right hand side assignments
 void type_relational_express(struct tree*);//handes relational_expression product rule
+void type_shift_exp(struct tree*);//handles shift_expression
+
 
 struct hashtable_s* scope_c_func_help(struct tree*);//helper for scope change
 struct type120* relation_helper(struct tree*); //helper for relational_expression
 void mult_helper(struct tree*, struct type120*); //helper function for type_mult_assign_exp
 void mult_postfix_helper(struct tree*, struct type120*, int); //helper function for type_mult_assign_exp for postfix_expressions
+void shift_helper(token*);//helper for type_shift_exp
+
 
 bool arr_check(struct tree*);//check if in an array
 void type_compare(int operand, struct type120*, struct type120*); //checks to see if two types are the same

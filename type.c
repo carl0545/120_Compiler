@@ -67,8 +67,16 @@ void type_init_declarator(struct tree *parseT){
     return;
   }
 
+
+
   left = ht_get(currScope, parseT->kids[0]->leaf->text);
-  right = ht_get(currScope, parseT->kids[1]->kids[1]->leaf->text);
+
+  if(parseT->kids[1]->kids[1]->prodrule == postfix_expression){
+    right = ht_get(currScope, parseT->kids[1]->kids[1]->kids[0]->leaf->text);
+  }
+  else{
+    right = ht_get(currScope, parseT->kids[1]->kids[1]->leaf->text);
+  }
 
   type_compare(-1, left, right);
 }
@@ -204,6 +212,67 @@ void type_express_state(struct tree *parseT){
     //    type_postfix_exp_2(parseT->kids[0]);
     //  }
       break;
+    case shift_expression:
+      type_shift_exp(parseT);
+      break;
+  }
+
+}
+
+void type_shift_exp(struct tree *parseT){
+  token *check;
+
+  if(parseT->kids[0]->prodrule == shift_expression){
+    type_shift_exp(parseT->kids[0]);
+    check = parseT->kids[2]->leaf;
+    shift_helper(check);
+  }
+  else{
+    check = parseT->kids[2]->leaf;
+    shift_helper(check);
+
+    struct type120* first_v = ht_get(currScope, parseT->kids[0]->leaf->text);
+    if(first_v->base_type != CLASS_T){
+      fprintf(stderr, "Shift expression stream variable error\n" );
+      exit(3);
+    }
+    if(strcmp(first_v->u.class.type, "stream") != 0){
+      fprintf(stderr, "Shift expression stream variable class error\n" );
+      exit(3);
+    }
+  }
+
+
+}
+
+void shift_helper(token *toke){
+  int product_r;
+  struct type120* iden;
+  product_r = toke->category;
+
+  switch(product_r){
+    case STRING:
+      return;
+    case ICON:
+      return;
+    case FCON:
+      return;
+    case CCON:
+      return;
+    case IDENTIFIER:
+      iden = ht_get(currScope, toke->text);
+
+      if(iden->base_type == INT_T || iden->base_type == DOUBLE_T || iden->base_type == CHAR_T){
+        return;
+      }
+      else{
+        fprintf(stderr, "Shift expression identifier error\n" );
+        exit(3);
+      }
+    default:
+    fprintf(stderr, "Shift expression error\n" );
+    exit(3);
+
   }
 
 

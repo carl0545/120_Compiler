@@ -23,11 +23,15 @@ void populateSymbolTable(struct tree *parseT){
       break;
     case postfix_expression-2: //class member call
       return;
+    case parameter_declaration:
+      return;
+    case parameter_declaration_list:
+      return;
     case IDENTIFIER:
       handle_identfier(parseT);
       break;
     case expression_statement:
-      handle_expr_state(parseT);
+      //handle_expr_state(parseT);
       break;
     case function_definition-1:
       handle_func_def(parseT);
@@ -52,6 +56,7 @@ void populateSymbolTable(struct tree *parseT){
         }
 
         handle_init_decl(parseT);
+
       }
 
 
@@ -65,7 +70,7 @@ void populateSymbolTable(struct tree *parseT){
 
 void handle_identfier(struct tree *parseT){
   if(ht_get(curr, parseT->leaf->text) == NULL){
-    fprintf(stderr, "SEMANTIC ERROR: use of an undeclared var\n");
+    fprintf(stderr, "SEMANTIC ERROR: use of an undeclared var: %s\n", parseT->leaf->text);
     exit(3);
   }
 
@@ -631,7 +636,9 @@ bool checkParams(struct listnode **p1, struct listnode **p2){
 
   int i;
   for(i = 0; i < count1-1; i++){
-    if(counter1->type->base_type != counter2->type->base_type || counter1->type->pointer != counter2->type->pointer){
+    //if(counter1->type->base_type != counter2->type->base_type || counter1->type->pointer != counter2->type->pointer){
+    if(counter1->type->base_type != counter2->type->base_type){
+      printf("base 1: %d    base 2: %d", counter1->type->pointer, counter2->type->pointer);
       fprintf(stderr, "%s\n", "SEMANTIC ERROR: function parameters do not match");
       exit(3);
     }
@@ -901,6 +908,63 @@ void initGlobal(){
   curr = global;
   mainCheck = false;
 
+
+  if(typenametable_lookup("string") == CLASS_NAME){
+    struct type120* class = malloc(sizeof(struct type120));
+    class->base_type = CLASS_T;
+    class->pointer = false;
+
+    class->u.class.type = "string";
+
+    ht_set(global, "string", class);
+  }
+
+  if(typenametable_lookup("ifstream") ==  CLASS_NAME){
+    struct type120* class = malloc(sizeof(struct type120));
+    class->base_type = CLASS_T;
+    class->pointer = false;
+
+    class->u.class.type = "stream";
+
+    ht_set(global, "ifstream", class);
+  }
+
+  if(typenametable_lookup("ofstream") ==  CLASS_NAME){
+    struct type120* class = malloc(sizeof(struct type120));
+    class->base_type = CLASS_T;
+    class->pointer = false;
+
+    class->u.class.type = "stream";
+
+    ht_set(global, "ofstream", class);
+
+  }
+
+  if(typenametable_lookup("iostream") == CLASS_NAME){
+    struct type120* cout = malloc(sizeof(struct type120));
+    struct type120* cin = malloc(sizeof(struct type120));
+    struct type120* endl = malloc(sizeof(struct type120));
+
+    cout->base_type = CLASS_T;
+    cout->pointer = false;
+
+    cout->u.class.type = "stream";
+
+    cin->base_type = CLASS_T;
+    cin->pointer = false;
+
+    cin->u.class.type = "stream";
+
+    endl->base_type = CHAR_T;
+    endl->pointer = true;
+
+    ht_set(global, "cout", cout);
+    ht_set(global, "cin", cin);
+    ht_set(global, "endl", endl);
+
+  }
+
+
 }
 
 int find_base_type(int token){
@@ -912,6 +976,12 @@ int find_base_type(int token){
       return DOUBLE_T;
       break;
     case(CHAR):
+      return CHAR_T;
+      break;
+    case(CCON):
+      return CHAR_T;
+      break;
+    case(STRING):
       return CHAR_T;
       break;
     case(BOOL):

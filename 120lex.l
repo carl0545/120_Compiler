@@ -46,7 +46,7 @@
 
 
 int lineno = 1;
-int saw_iostream, saw_string, saw_std;
+int saw_iostream, saw_string, saw_fstream, saw_std;
 
 
 static int yywrap(void);
@@ -232,12 +232,19 @@ stringtext				([^"])|(\\.)
 "#include"[ ]*\"[^\\"]+\"  { init_stack(&includeStack); handle_include(); }
 "#include <iostream>"			{ saw_iostream = 1; }
 "#include <string>"			{ saw_string = 1; }
+"#include <fstream>"    { saw_fstream = 1; }
 "using namespace std;"			{ saw_std = 1;
 		  if (saw_string) typenametable_insert("string", CLASS_NAME);
 		  if (saw_iostream) {
+      typenametable_insert("iostream", CLASS_NAME);
 		  typenametable_insert("ifstream", CLASS_NAME);
 			typenametable_insert("ofstream", CLASS_NAME);
 			}
+      else if (saw_fstream) {
+		  typenametable_insert("ifstream", CLASS_NAME);
+			typenametable_insert("ofstream", CLASS_NAME);
+			}
+
 		}
 
 
