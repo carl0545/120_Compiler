@@ -93,7 +93,7 @@ void handle_literal(int literalE, struct tree *parseT){
       newType->base_type = DOUBLE_T;
       break;
     case CCON: //NOT WORKING
-      printf("THIS IS A CHARACTER\n");
+
       exit(3);
       newType->base_type = CHAR_T;
       break;
@@ -305,7 +305,7 @@ void handle_member_spec1(struct tree *parseT, struct type120 *newType){
   }
 
   if(parseT->kids[1] == NULL){
-    printf("oh alright\n");
+
     return;
   }
 
@@ -418,8 +418,6 @@ void handle_c_func_def(struct tree *parseT, bool pointer){
 
   int k;
   for(k = 0; k < newFuncTree->nkids; k++){
-    printf("We're here\n");
-    printf("TESTING: %d\n", newFuncTree->kids[k]->prodrule);
     populateSymbolTable(newFuncTree->kids[k]);
 
   }
@@ -638,7 +636,6 @@ bool checkParams(struct listnode **p1, struct listnode **p2){
   for(i = 0; i < count1-1; i++){
     //if(counter1->type->base_type != counter2->type->base_type || counter1->type->pointer != counter2->type->pointer){
     if(counter1->type->base_type != counter2->type->base_type){
-      printf("base 1: %d    base 2: %d", counter1->type->pointer, counter2->type->pointer);
       fprintf(stderr, "%s\n", "SEMANTIC ERROR: function parameters do not match");
       exit(3);
     }

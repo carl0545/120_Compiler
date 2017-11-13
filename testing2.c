@@ -36,7 +36,7 @@ cout << test();
 Rectangle rect[5];
 
 //rect.x();
-int y = func(3, 3, 3);
+double y = 6.0;
 //y = rect.x();
 int z = 6;
 int a = 3;
