@@ -33,7 +33,7 @@ struct type120* relation_helper(struct tree*); //helper for relational_expressio
 void mult_helper(struct tree*, struct type120*); //helper function for type_mult_assign_exp
 void mult_postfix_helper(struct tree*, struct type120*, int); //helper function for type_mult_assign_exp for postfix_expressions
 void shift_helper(token*);//helper for type_shift_exp
-
+void shift_post_helper(struct tree*);//helper for postfix_expressions in shift_expression
 
 bool arr_check(struct tree*);//check if in an array
 void type_compare(int operand, struct type120*, struct type120*); //checks to see if two types are the same

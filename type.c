@@ -219,17 +219,57 @@ void type_express_state(struct tree *parseT){
 
 }
 
+void shift_post_helper(struct tree *parseT){
+  struct type120 *func_v, *return_v;
+
+  func_v = ht_get(currScope, parseT->kids[0]->leaf->text);
+
+  return_v = func_v->u.function.elemtype;
+
+  switch(return_v->base_type){
+    case INT_T:
+      return;
+    case DOUBLE_T:
+      return;
+    case CHAR_T:
+      return;
+    case CLASS_T:
+      //fix later to check if string
+      return;
+    default:
+      fprintf(stderr, "Shift expression postfix error\n" );
+      exit(3);
+  }
+
+
+
+
+
+}
+
 void type_shift_exp(struct tree *parseT){
   token *check;
 
   if(parseT->kids[0]->prodrule == shift_expression){
     type_shift_exp(parseT->kids[0]);
-    check = parseT->kids[2]->leaf;
-    shift_helper(check);
+
+    if(parseT->kids[2]->prodrule == postfix_expression){
+      shift_post_helper(parseT->kids[2]);
+
+    }
+    else{
+      check = parseT->kids[2]->leaf;
+      shift_helper(check);
+    }
   }
   else{
-    check = parseT->kids[2]->leaf;
-    shift_helper(check);
+    if(parseT->kids[2]->prodrule == postfix_expression){
+      shift_post_helper(parseT->kids[2]);
+    }
+    else{
+      check = parseT->kids[2]->leaf;
+      shift_helper(check);
+    }
 
     struct type120* first_v = ht_get(currScope, parseT->kids[0]->leaf->text);
     if(first_v->base_type != CLASS_T){

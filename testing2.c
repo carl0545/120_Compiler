@@ -30,7 +30,7 @@ ifstream stre;
 string str;
 int ari = 9;
 
-cout << "hello" << 4;
+cout << test();
 
 
 Rectangle rect[5];
