@@ -246,7 +246,56 @@ void type_express_state(struct tree *parseT){
 
 }
 
+void shift_post_helper_2(struct tree *parseT){
+  struct type120 *class_v, *member_v, *right;
+  struct hashtable_s *tempScope;
+  int arrFlag = 0;
+
+  if(parseT->kids[0]->prodrule == postfix_expression){
+    arrFlag = 1;
+  }
+
+  if(arrFlag == 1){
+    class_v = ht_get(currScope, parseT->kids[0]->kids[0]->leaf->text);
+  }
+  else{
+    class_v = ht_get(currScope, parseT->kids[0]->leaf->text);
+  }
+
+  if(arrFlag == 1){
+    tempScope = class_v->u.array.elemtype->u.class.private;
+  }
+  else{
+    tempScope = class_v->u.class.private;
+  }
+
+  member_v = ht_get(tempScope, parseT->kids[2]->leaf->text);
+
+  right = member_v->u.function.elemtype;
+
+  switch(right->base_type){
+    case INT_T:
+      return;
+    case DOUBLE_T:
+      return;
+    case CHAR_T:
+      return;
+    case CLASS_T:
+      //fix later to check if string
+      return;
+    default:
+      fprintf(stderr, "Shift expression postfix error\n" );
+      exit(3);
+  }
+}
+
 void shift_post_helper(struct tree *parseT){
+  //check if in a class postfix
+  if(parseT->kids[0]->prodrule == postfix_expression-2){
+    shift_post_helper_2(parseT->kids[0]);
+    return;
+  }
+
   struct type120 *func_v, *return_v;
 
   func_v = ht_get(currScope, parseT->kids[0]->leaf->text);
