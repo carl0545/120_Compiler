@@ -30,10 +30,12 @@ ifstream stre;
 string str;
 int ari = 9;
 
-cout << test();
+Rectangle rect;
+
+cout << "hello" << test();   //<< rect.x(2);
 
 
-Rectangle rect[5];
+
 
 //rect.x();
 double y = 6.0;
