@@ -6,10 +6,10 @@ CFLAGS=-c -g -Wall
 all: 120
 
 .c.o:
-	$(CC) -c $<
+	$(CC) -c $(CFLAGS) $<
 
 120: main.o 120gram.o 120lex.o tree.o hash.o symtable.o list.o type.o
-	$(CC) -o 120 main.o 120gram.o 120lex.o tree.o hash.o symtable.o list.o type.o
+	$(CC) -Wall -o 120 main.o 120gram.o 120lex.o tree.o hash.o symtable.o list.o type.o
 
 120gram.c 120gram.h: 120gram.y
 	$(YACC) -dt --verbose 120gram.y
