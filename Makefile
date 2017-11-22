@@ -1,7 +1,7 @@
 YACC=yacc
 LEX=flex
 CC=cc
-CFLAGS=-c -g -Wall
+CFLAGS=-g -Wall -std=c99
 
 all: 120
 
@@ -17,7 +17,7 @@ all: 120
 	mv -f y.tab.h 120gram.h
 
 main.o: main.c
-	$(CC) $(CFLAGS) main.c
+	$(CC) -c $(CFLAGS) main.c
 
 120lex.c: 120lex.l
 	$(LEX) -t 120lex.l >120lex.c

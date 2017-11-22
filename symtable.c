@@ -134,7 +134,7 @@ void handle_init_list(struct tree *parseT){
   int base = find_base_type(parseT->kids[0]->leaf->category);
 
   struct tree *iter = parseT->kids[1];
-  struct tree *prev = iter;
+  //struct tree *prev = iter;
   int count = 1;
   while(iter->prodrule == init_declarator_list){
     count++;
@@ -189,7 +189,7 @@ void handle_init_list(struct tree *parseT){
 
 void handle_class_spec(struct tree *parseT){
   struct type120* newType;
-  char *nameKey = parseT->kids[0]->kids[1]->leaf->text;
+  //char *nameKey = parseT->kids[0]->kids[1]->leaf->text;
   newType = malloc(sizeof(struct type120));
   newType->base_type = CLASS_T;
 
@@ -368,6 +368,7 @@ void handle_c_func_def(struct tree *parseT, bool pointer){
   }
 
   //check if definition return type and parameters match
+  /*
   struct type120 *checkDec, *checkDefin;
   checkDefin = malloc(sizeof(struct type120));
   checkDefin->base_type = CLASS_T;
@@ -378,6 +379,7 @@ void handle_c_func_def(struct tree *parseT, bool pointer){
   else{
     checkDefin->pointer = true;
   }
+  */
 
   //FINISH IMPLEMNTING later
 
@@ -385,7 +387,7 @@ void handle_c_func_def(struct tree *parseT, bool pointer){
   //Enter the function scope, change scope of curr and recursive call populate symtable
   //exit with changing curr back to global
 
-  struct hashtable_s *newFuncScope = ht_create(FUNCTIONSIZE, curr);
+  //struct hashtable_s *newFuncScope = ht_create(FUNCTIONSIZE, curr);
   struct hashtable_s *oldScope;
   struct hashtable_s *classScope;
   struct tree *newFuncTree;
@@ -558,7 +560,7 @@ void handle_func_def(struct tree *parseT){
   //Enter the function scope, change scope of curr and recursively call populateSymbolTable
   //make sure it exits with changing curr back to global
 
-  struct hashtable_s *newFuncScope = ht_create(FUNCTIONSIZE, curr);
+  //struct hashtable_s *newFuncScope = ht_create(FUNCTIONSIZE, curr);
   struct hashtable_s *oldScope;
   struct tree *newFuncTree;
   struct type120 *funct;
