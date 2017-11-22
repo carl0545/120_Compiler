@@ -26,7 +26,8 @@ void type_postfix_exp_2(struct tree*); //handle postfix_expression-2
 void type_mult_assign_exp(struct tree*);//handles assignment_expression product rule with multiple right hand side assignments
 void type_relational_express(struct tree*);//handes relational_expression product rule
 void type_shift_exp(struct tree*);//handles shift_expression
-
+void func_sig(struct tree*);//check function signatures
+void func_param(struct tree*);//check function parameters
 
 struct hashtable_s* scope_c_func_help(struct tree*);//helper for scope change
 struct type120* relation_helper(struct tree*); //helper for relational_expression

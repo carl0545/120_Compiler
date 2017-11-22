@@ -28,6 +28,14 @@ void type_check(struct tree *parseT){
       break;
     case init_declarator:
       type_init_declarator(parseT);
+      break;
+    case postfix_expression:
+      func_param(parseT);
+      return;
+    case direct_declarator:
+      return;
+    case IDENTIFIER:
+      func_sig(parseT);
 
   }
 
@@ -36,6 +44,42 @@ void type_check(struct tree *parseT){
     type_check(parseT->kids[i]);
   }
 
+}
+
+void func_param(struct tree *parseT){
+  printf("Hey there: %s\n", parseT->kids[0]->leaf->text);
+  struct type120 *declared, *param, *check;
+  struct listnode *list_c;
+
+  if(parseT->kids[2]->prodrule == parameter_declaration_list){
+    printf("IMPLEMENT PARAMTER LIST\n");
+    return;
+  }
+
+  //main check
+  if(strcmp(parseT->kids[2]->leaf->text, "main") == 0){
+    fprintf(stderr, "%s\n", "Main cannot be a paramter\n");
+    exit(3);
+  }
+
+  declared = ht_get(currScope, parseT->kids[0]->leaf->text);
+  check = ht_get(currScope, parseT->kids[2]->leaf->text);
+
+  list_c = declared->u.function.parameters;
+  param = list_c->next->type;
+
+  type_compare(-1, check, param);
+}
+
+void func_sig(struct tree *parseT){
+  struct type120 *func_check;
+
+  func_check = ht_get(currScope, parseT->leaf->text);
+
+  if(func_check->base_type == FUNCTION_T){
+    fprintf(stderr, "SEMANTIC ERROR: Function '%s' has no parameters\n", parseT->leaf->text);
+    exit(3);
+  }
 }
 
 bool arr_check(struct tree *parseT){
@@ -195,6 +239,9 @@ void type_array_check(struct tree *parseT){
   left = arr->u.array.elemtype;
   right = ht_get(currScope, parseT->kids[2]->leaf->text);
 
+  //printf("TESTING ARRAY: left: %d  right: %d\n", left->base_type, right->base_type);
+  //exit(3);
+
   type_compare(-1, left, right);
 }
 
@@ -347,6 +394,7 @@ void type_shift_exp(struct tree *parseT){
       shift_helper(check);
     }
 
+    //check first stream variable
     struct type120* first_v = ht_get(currScope, parseT->kids[0]->leaf->text);
     if(first_v->base_type != CLASS_T){
       fprintf(stderr, "Shift expression stream variable error\n" );
@@ -518,11 +566,19 @@ void type_compare(int operand, struct type120 *type1, struct type120 *type2){
 
     if(rightT == FUNCTION_T){
 
+
       rightT = type2->u.function.elemtype->base_type;
+    }
+
+    if(leftT == FUNCTION_T){
+
+
+      leftT = type1->u.function.elemtype->base_type;
     }
 
     if(leftT != rightT){
       fprintf(stderr, "Type Error: variable assignment doesn't matched declaration\n");
+      fprintf(stderr, "left: %d right: %d", type1->base_type, type2->base_type);
       exit(3);
     }
 
