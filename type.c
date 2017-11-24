@@ -47,7 +47,6 @@ void type_check(struct tree *parseT){
 }
 
 void func_param(struct tree *parseT){
-  printf("Hey there: %s\n", parseT->kids[0]->leaf->text);
   struct type120 *declared, *param, *check;
   struct listnode *list_c;
 
@@ -149,12 +148,28 @@ void type_init_declarator(struct tree *parseT){
       right = ht_get(currScope, parseT->kids[1]->kids[1]->kids[0]->leaf->text);
     }
   }
+  else if(parseT->kids[1]->kids[1]->prodrule < 0){
+    type_init_mult(parseT);
+    return;
+  }
   else{
     right = ht_get(currScope, parseT->kids[1]->kids[1]->leaf->text);
   }
 
   type_compare(-1, left, right);
 }
+
+void type_init_mult(struct tree *parseT){
+  struct type120 *left;
+
+  left = ht_get(currScope, parseT->kids[0]->leaf->text);
+
+  mult_helper(parseT->kids[1]->kids[1], left);
+}
+
+//void init_mult_helper(struct tree *parseT, struct type120 *left){
+
+//}
 
 void type_unary_express(struct tree *parseT){
   if(parseT->kids[1]->prodrule == primary_expression){
