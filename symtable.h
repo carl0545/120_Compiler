@@ -61,6 +61,8 @@ void handle_member_spec1(struct tree*, struct type120*);
 void handle_member_spec2(struct tree*, struct type120*);
 void handle_c_func_decl(struct tree*);
 void handle_c_func_def(struct tree*, bool);
+void handle_c_func_decl_inner(struct tree*);
+void handle_c_func_def_inner(struct tree*);
 void handle_init_list(struct tree*);
 void handle_expr_state(struct tree*);
 void handle_literal(int, struct tree*);
