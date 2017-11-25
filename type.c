@@ -12,6 +12,10 @@ void type_check(struct tree *parseT){
   int productRule = parseT->prodrule;
 
   switch(productRule){
+    case function_definition: //temporary bug fix for constructor bug
+      if(parseT->kids[0]->prodrule == direct_declarator){
+        return;
+      }
     case function_definition-1:
 
       scope_change(parseT);
@@ -84,9 +88,48 @@ void mult_param_helper(struct tree *parseT){
 
 }
 
+void mult_param_helper_c(struct tree *parseT){
+  printf("we in mult baby!!!\n");
+}
+
+void class_func_helper(struct tree *parseT){
+  struct type120 *class_v, *declared, *param, *check;
+  struct hashtable_s *tempScope;
+  struct listnode *list_c;
+
+  if(parseT->kids[2]->prodrule == expression_list){
+    mult_param_helper_c(parseT);
+    return;
+  }
+
+  if(strcmp(parseT->kids[2]->leaf->text, "main") == 0){
+    fprintf(stderr, "%s\n", "Main cannot be a paramter\n");
+    exit(3);
+  }
+
+  class_v = ht_get(currScope, parseT->kids[0]->kids[0]->leaf->text);
+
+  tempScope = class_v->u.class.private;
+
+  declared = ht_get(tempScope, parseT->kids[0]->kids[2]->leaf->text);
+  check = ht_get(currScope, parseT->kids[2]->leaf->text);
+
+  list_c = declared->u.function.parameters;
+  param = list_c->next->type;
+
+  type_compare(-1, check, param);
+
+
+}
+
 void func_param(struct tree *parseT){
   struct type120 *declared, *param, *check;
   struct listnode *list_c;
+
+  if(parseT->kids[0]->prodrule == postfix_expression-2){
+    class_func_helper(parseT);
+    return;
+  }
 
   if(parseT->kids[2]->prodrule == expression_list){
     mult_param_helper(parseT);
@@ -568,7 +611,12 @@ void mult_helper(struct tree *parseT, struct type120 *left){
 
     if(i == 0){
       if(iter->kids[0]->prodrule == postfix_expression){
-        mult_postfix_helper(iter->kids[0], left, iter->kids[1]->prodrule);
+        if(iter->kids[0]->kids[0]->prodrule == postfix_expression-2){
+          mult_postfix_2_helper(iter->kids[0]->kids[0], left, iter->kids[1]->prodrule);
+        }
+        else{
+          mult_postfix_helper(iter->kids[0], left, iter->kids[1]->prodrule);
+        }
       }
       else{
         type_compare(iter->kids[1]->prodrule, left, ht_get(currScope, iter->kids[0]->leaf->text));
@@ -576,7 +624,12 @@ void mult_helper(struct tree *parseT, struct type120 *left){
     }
 
     if(iter->kids[2]->prodrule == postfix_expression){
+      if(iter->kids[2]->kids[0]->prodrule == postfix_expression-2){
+        mult_postfix_2_helper(iter->kids[2]->kids[0], left, iter->kids[1]->prodrule);
+      }
+      else{
         mult_postfix_helper(iter->kids[2], left, iter->kids[1]->prodrule);
+      }
     }
     else if(iter->kids[2]->prodrule > 0){
       type_compare(iter->kids[1]->prodrule, left, ht_get(currScope, iter->kids[2]->leaf->text));
@@ -587,6 +640,34 @@ void mult_helper(struct tree *parseT, struct type120 *left){
 
   }
 
+}
+void mult_postfix_2_helper(struct tree *parseT, struct type120 *left, int oper){
+  struct type120 *right, *class, *member_v;
+  struct hashtable_s *tempScope;
+  int arrFlag = 0;
+
+  if(parseT->kids[0]->prodrule == postfix_expression){
+    arrFlag = 1;
+  }
+
+  if(arrFlag == 1){
+    class = ht_get(currScope, parseT->kids[0]->kids[0]->leaf->text);
+  }
+  else{
+    class = ht_get(currScope, parseT->kids[0]->leaf->text);
+  }
+
+  if(arrFlag == 1){
+    tempScope = class->u.array.elemtype->u.class.private;
+  }
+  else{
+    tempScope = class->u.class.private;
+  }
+
+  member_v = ht_get(tempScope, parseT->kids[2]->leaf->text);
+
+  right = member_v->u.function.elemtype;
+  type_compare(oper, left, right);
 }
 
 void mult_postfix_helper(struct tree *parseT, struct type120 *left, int oper){

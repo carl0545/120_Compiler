@@ -63,6 +63,8 @@ void handle_c_func_decl(struct tree*);
 void handle_c_func_def(struct tree*, bool);
 void handle_c_func_decl_inner(struct tree*);
 void handle_c_func_def_inner(struct tree*);
+void handle_c_func_def_constr(struct tree*);
+void handle_c_func_decl_constr(struct tree*);
 void handle_init_list(struct tree*);
 void handle_expr_state(struct tree*);
 void handle_literal(int, struct tree*);

@@ -34,11 +34,13 @@ struct hashtable_s* scope_c_func_help(struct tree*);//helper for scope change
 struct type120* relation_helper(struct tree*); //helper for relational_expression
 void mult_helper(struct tree*, struct type120*); //helper function for type_mult_assign_exp
 void mult_postfix_helper(struct tree*, struct type120*, int); //helper function for type_mult_assign_exp for postfix_expressions
+void mult_postfix_2_helper(struct tree*, struct type120*, int); //helper function for type_mult_assign_exp for postfix_expression-2
 void mult_param_helper(struct tree*);//checks function signatures with mult parameters
+void mult_param_helper_c(struct tree*);//checks function signatures with mult paramters
 void shift_helper(token*);//helper for type_shift_exp
 void shift_post_helper(struct tree*);//helper for postfix_expressions in shift_expression
 void shift_post_helper_2(struct tree*);//helper for postfix_expression-2 in shift_expression
-
+void class_func_helper(struct tree*);//helper for func_param to deal with class functions
 
 bool arr_check(struct tree*);//check if in an array
 void type_compare(int operand, struct type120*, struct type120*); //checks to see if two types are the same

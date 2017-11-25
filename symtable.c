@@ -300,8 +300,8 @@ void handle_c_func_decl_inner(struct tree *parseT){
   funcVar->base_type = FUNCTION_T;
 
   funcVar->u.function.elemtype = malloc(sizeof(struct type120));
-  funcVar->u.function.elemtype->base_type = find_base_type(parseT->kids[0]->leaf->category);
 
+  funcVar->u.function.elemtype->base_type = find_base_type(parseT->kids[0]->leaf->category);
 
   //parameters part
 
@@ -379,7 +379,6 @@ void handle_c_func_decl_inner(struct tree *parseT){
 
 void handle_c_func_def_inner(struct tree *parseT){
   struct hashtable_s *oldScope;
-  struct hashtable_s *classScope;
   struct tree *newFuncTree;
   struct type120 *funct;
 
@@ -415,10 +414,132 @@ void handle_c_func_def_inner(struct tree *parseT){
 
 }
 
+void handle_c_func_decl_constr(struct tree *parseT){
+  struct type120 *funcVar = malloc(sizeof(struct type120));
+  funcVar->base_type = FUNCTION_T;
+
+  funcVar->u.function.elemtype = malloc(sizeof(struct type120));
+
+  funcVar->u.function.elemtype->base_type = VOID_T;
+
+  //parameters part
+
+  //no params
+  if(parseT->kids[0]->kids[2] == NULL){
+    ht_set(curr, parseT->kids[0]->kids[0]->leaf->text, funcVar);
+  }
+  else if(parseT->kids[0]->kids[2]->prodrule == parameter_declaration){
+    //one param
+    struct type120 *param = malloc(sizeof(struct type120));
+    funcVar->u.function.parameters = malloc(sizeof(struct listnode));
+
+    if(parseT->kids[0]->kids[2]->kids[1] != NULL){
+      param->pointer = true;
+    }
+    else{
+      param->pointer = false;
+    }
+
+    param->base_type = find_base_type(parseT->kids[0]->kids[2]->kids[0]->leaf->category);
+
+    add(&funcVar->u.function.parameters, param);
+
+    ht_set(curr, parseT->kids[0]->kids[0]->leaf->text, funcVar);
+
+  }
+  else if(parseT->kids[0]->kids[2]->prodrule == parameter_declaration_list){
+    funcVar->u.function.parameters = malloc(sizeof(struct listnode));
+
+    struct tree *iter = parseT->kids[0]->kids[2];
+    int count = 1;
+    while(iter->prodrule == parameter_declaration_list){
+      count++;
+      iter = iter->kids[0];
+    }
+    int index = count - 1;
+
+    for(int i = 0; i < count; i++){
+      iter = parseT->kids[0]->kids[2];
+      struct type120 *param = malloc(sizeof(struct type120));
+      while(index > i){
+        iter = iter->kids[0];
+        index--;
+      }
+      index = count - 1;
+
+      if(i == 0){
+        param->base_type = find_base_type(iter->kids[0]->leaf->category);
+        if(iter->kids[1] != NULL){
+          param->pointer = true;
+        }
+        else{
+          param->pointer = false;
+        }
+      }
+      else{
+        param->base_type = find_base_type(iter->kids[2]->kids[0]->leaf->category);
+        if(iter->kids[2]->kids[1] != NULL){
+          param->pointer = true;
+        }
+        else{
+          param->pointer = false;
+        }
+      }
+
+      add(&funcVar->u.function.parameters, param);
+
+    }
+
+    ht_set(curr, parseT->kids[0]->kids[0]->leaf->text, funcVar);
+    //exit(3);
+
+  }
+
+}
+
+void handle_c_func_def_constr(struct tree *parseT){
+  return; //fix this function later
+
+  struct hashtable_s *oldScope;
+  struct tree *newFuncTree;
+  struct type120 *funct;
+
+  handle_c_func_decl_constr(parseT);
+
+  funct = ht_get(curr, parseT->kids[0]->kids[0]->leaf->text);
+
+  oldScope = curr;
+
+  if(parseT->kids[2]->prodrule == compound_statement){
+    newFuncTree = parseT->kids[2];
+  }
+  else{
+    fprintf(stderr, "ERROR IN handle_c_func_def\n");
+    exit(3);
+  }
+
+  funct->u.function.sources = ht_create(FUNCTIONSIZE, curr);
+
+  //something is wrong with this
+  curr = funct->u.function.sources;
+
+  int k;
+  for(k = 0; k < newFuncTree->nkids; k++){
+    populateSymbolTable(newFuncTree->kids[k]);
+
+  }
+
+  curr = oldScope;
+
+}
+
 void handle_member_spec1(struct tree *parseT, struct type120 *newType){
 
-  if(parseT->kids[0]->kids[0]->prodrule == function_definition || parseT->kids[0]->kids[0]->prodrule == function_definition-1){
+  if(parseT->kids[0]->kids[0]->prodrule == function_definition-1){
     handle_c_func_def_inner(parseT->kids[0]->kids[0]);
+  }
+  else if(parseT->kids[0]->kids[0]->prodrule == function_definition){
+    handle_c_func_def_constr(parseT->kids[0]->kids[0]);
   }
   else if(parseT->kids[0]->kids[1]->prodrule == direct_declarator){
     //printf("CLASS direct_declarator\n");

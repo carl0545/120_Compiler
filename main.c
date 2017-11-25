@@ -46,10 +46,7 @@ int main(int argc, char *argv[]) {
     init_type();
     type_check(rootCpy);
 
-
-
-
-
+    
 
   }
 
