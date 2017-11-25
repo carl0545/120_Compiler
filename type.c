@@ -89,7 +89,45 @@ void mult_param_helper(struct tree *parseT){
 }
 
 void mult_param_helper_c(struct tree *parseT){
-  printf("we in mult baby!!!\n");
+  struct type120 *declared, *class_v;
+  struct listnode *list_dec;
+  struct hashtable_s *tempScope;
+  struct tree *expressCheck;
+  int count_dec;
+  int count_defin = 2;
+
+  class_v = ht_get(currScope, parseT->kids[0]->kids[0]->leaf->text);
+
+  tempScope = class_v->u.class.private;
+
+  declared = ht_get(tempScope, parseT->kids[0]->kids[2]->leaf->text);
+
+  //check paramter counts
+  expressCheck = parseT->kids[2];
+  list_dec = declared->u.function.parameters;
+  count_dec = listSize(list_dec);
+
+  while(expressCheck->kids[0]->prodrule == expression_list){
+    count_defin++;
+    expressCheck = expressCheck->kids[0];
+  }
+
+  if(count_dec != count_defin){
+    fprintf(stderr, "Function: ''%s' doesn't have the appropriate amount of parameters\n", parseT->kids[0]->leaf->text);
+    exit(3);
+  }
+
+  //param type Checking
+  expressCheck = parseT->kids[2];
+  for(int k = count_dec; k > 2; k--){
+    struct type120 *check, *param;
+
+    check = ht_get(currScope, expressCheck->kids[2]->leaf->text);
+    param = listGet(list_dec, k);
+
+    type_compare(-1, check, param);
+  }
+
 }
 
 void class_func_helper(struct tree *parseT){
