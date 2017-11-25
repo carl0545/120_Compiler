@@ -42,6 +42,9 @@ void populateSymbolTable(struct tree *parseT){
     case FCON:
       handle_literal(FCON, parseT);
       break;
+    case STRING:
+      handle_literal(STRING, parseT);
+      break;
     case simple_declaration:{
 
         if(parseT->kids[0]->prodrule == class_specifier){
@@ -95,6 +98,9 @@ void handle_literal(int literalE, struct tree *parseT){
     case CCON: //NOT WORKING
 
       exit(3);
+      newType->base_type = CHAR_T;
+      break;
+    case STRING:
       newType->base_type = CHAR_T;
       break;
     default:
