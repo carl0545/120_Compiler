@@ -12,6 +12,8 @@ struct listnode{
 
 void add(struct listnode**, struct type120*);
 void printList(struct listnode*);
+int listSize(struct listnode*);
+struct type120* listGet(struct listnode*, int elem);
 
 
 #endif

@@ -46,12 +46,50 @@ void type_check(struct tree *parseT){
 
 }
 
+void mult_param_helper(struct tree *parseT){
+  struct type120 *declared;
+  struct listnode *list_dec;
+  struct tree *expressCheck;
+  int count_dec;
+  int count_defin = 2;
+
+  declared = ht_get(currScope, parseT->kids[0]->leaf->text);
+
+  //check parameter counts
+  expressCheck = parseT->kids[2];
+  list_dec = declared->u.function.parameters;
+  count_dec = listSize(list_dec);
+
+
+  while(expressCheck->kids[0]->prodrule == expression_list){
+    count_defin++;
+    expressCheck = expressCheck->kids[0];
+  }
+
+  if(count_dec != count_defin){
+    fprintf(stderr, "Function: ''%s' doesn't have the appropriate amount of parameters\n", parseT->kids[0]->leaf->text);
+    exit(3);
+  }
+
+  //param type Checking
+  expressCheck = parseT->kids[2];
+  for(int k = count_dec; k > 2; k--){
+    struct type120 *check, *param;
+
+    check = ht_get(currScope, expressCheck->kids[2]->leaf->text);
+    param = listGet(list_dec, k);
+
+    type_compare(-1, check, param);
+  }
+
+}
+
 void func_param(struct tree *parseT){
   struct type120 *declared, *param, *check;
   struct listnode *list_c;
 
-  if(parseT->kids[2]->prodrule == parameter_declaration_list){
-    printf("IMPLEMENT PARAMTER LIST\n");
+  if(parseT->kids[2]->prodrule == expression_list){
+    mult_param_helper(parseT);
     return;
   }
 
@@ -166,10 +204,6 @@ void type_init_mult(struct tree *parseT){
 
   mult_helper(parseT->kids[1]->kids[1], left);
 }
-
-//void init_mult_helper(struct tree *parseT, struct type120 *left){
-
-//}
 
 void type_unary_express(struct tree *parseT){
   if(parseT->kids[1]->prodrule == primary_expression){
