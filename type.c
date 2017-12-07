@@ -20,8 +20,10 @@ void type_check(struct tree *parseT){
 
       scope_change(parseT);
       break;
+    case class_head:
+      class_scope_change(parseT);
+      break;
     case expression_statement:
-
       type_express_state(parseT->kids[0]);
       break;
     case relational_expression:
@@ -47,6 +49,18 @@ void type_check(struct tree *parseT){
   for(int i = 0; i < parseT->nkids; i++){
     type_check(parseT->kids[i]);
   }
+
+}
+
+void class_scope_change(struct tree *parseT){
+    struct hashtable_s *cScope;
+    struct type120 *class_v;
+
+    class_v = ht_get(global, parseT->kids[1]->leaf->text);
+
+    cScope = class_v->u.class.private;
+
+    currScope = cScope;
 
 }
 
@@ -836,12 +850,18 @@ void scope_change(struct tree *parseT){
 
   productRule = parseT->kids[1]->prodrule;
 
+//need to implement scope changing for nested class function definitions
 
   switch(productRule){
     case declarator:
       newScope = ht_get(currScope, parseT->kids[1]->kids[1]->kids[0]->leaf->text)->u.function.sources;
       break;
     case direct_declarator:
+      if(ht_get(currScope,parseT->kids[1]->kids[0]->leaf->text) == NULL){
+        printf("THIS IS NULL: %s\n", parseT->kids[1]->kids[0]->leaf->text);
+        newScope = currScope;
+        break;
+      }
       newScope = ht_get(currScope, parseT->kids[1]->kids[0]->leaf->text)->u.function.sources;
       break;
     case direct_declarator-1:

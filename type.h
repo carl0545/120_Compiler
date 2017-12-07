@@ -14,6 +14,7 @@ struct hashtable_s *currScope;
 void init_type(); //initalizes neccesary variables necessary prior to typechecking
 
 void scope_change(struct tree*);//changes the scope
+void class_scope_change(struct tree*); //changes the class scope
 
 void type_check(struct tree*); //main recursive call - performs a type check on all expressions
 void type_express_state(struct tree*);// handles expression_statement product rule

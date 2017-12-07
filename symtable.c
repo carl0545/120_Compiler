@@ -203,6 +203,8 @@ void handle_class_spec(struct tree *parseT){
 
   newType->u.class.private = classScope;
 
+  curr = newType->u.class.private;
+
 
 
   if(parseT->kids[2]->prodrule == member_specification){
@@ -214,9 +216,11 @@ void handle_class_spec(struct tree *parseT){
     handle_member_spec2(parseT->kids[2], newType);
   }
 
+  curr = oldScope;
+
   ht_set(curr, parseT->kids[0]->kids[1]->leaf->text, newType);
 
-  curr = oldScope;
+
 
 }
 void handle_c_func_decl(struct tree *parseT){
@@ -582,7 +586,8 @@ void handle_member_spec1(struct tree *parseT, struct type120 *newType){
 }
 
 void handle_member_spec2(struct tree *parseT, struct type120 *newType){
-  /*
+
+/*
 struct hashtable_s *classScope = ht_create(CLASSSIZE, curr);
 struct hashtable_s *oldScope = curr;
 
@@ -595,7 +600,8 @@ struct hashtable_s *oldScope = curr;
     newType->u.class.private = classScope;
     curr = classScope;
   }
-  */
+*/
+
 
   if(parseT->kids[2] == NULL){
     //printf("oh alright1\n");
@@ -655,8 +661,8 @@ void handle_c_func_def(struct tree *parseT, bool pointer){
   struct type120 *funct;
 
 
-  classScope = ht_get(curr, checker->kids[0]->leaf->text)->u.class.private;
-
+  //classScope = ht_get(curr, checker->kids[0]->leaf->text)->u.class.private;
+  classScope = curr;
 
   funct = ht_get(classScope, checker->kids[2]->leaf->text);
 
@@ -932,6 +938,7 @@ void class_check(struct type120 *check, struct tree *parseT){
 
   struct type120 *class_v;
   class_v = ht_get(curr, parseT->kids[0]->leaf->text);
+
 
   check->u.class.private = class_v->u.class.private;
   check->u.class.type = parseT->kids[0]->leaf->text;

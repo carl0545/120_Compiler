@@ -22,6 +22,7 @@ enum types {
 struct type120 {
    enum types base_type; //Contains Type name
    bool pointer; //true if pointer false if not
+   int size; //hold size of type
    union {
       struct arrayInfo {
          int size; /* allow for missing size, e.g. -1 */

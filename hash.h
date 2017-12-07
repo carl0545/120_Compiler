@@ -31,6 +31,7 @@ int ht_hash(struct hashtable_s *hashtable, char *key); //Hash a string for a par
 struct entry_s *ht_newpair(char *key, struct type120 *value);//Create a new entry node
 void ht_set(struct hashtable_s *hashtable, char *key, struct type120 *value);//Insert an entry into hash table
 struct type120 *ht_get(struct hashtable_s *hashtable, char *key);//Retrieve a node
+void ht_set_size(struct hashtable_s *hashtable); //Assigns the size attribute to every sym table entry
 
 
 
