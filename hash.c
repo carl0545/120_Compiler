@@ -199,7 +199,7 @@ struct type120 *ht_get(struct hashtable_s *hashtable, char *key){
 
 }
 
-void ht_set_size(struct hashtable_s *hashtable){
+void ht_set_size(struct hashtable_s *hashtable, int local, int global, int param, enum regions_h currRegion){
   int size_h;
   size_h = hashtable->size;
 
@@ -216,11 +216,46 @@ void ht_set_size(struct hashtable_s *hashtable){
 
     printf("%s: %d\n", hashtable->table[k]->key ,type_v->base_type);
 
-    if(type_v->base_type == CLASS_T){
-      printf("going into private:\n\n");
-      ht_set_size(type_v->u.class.private);
-      printf("coming out of private\n\n");
+    switch(type_v->base_type){
+        case INT_T:
+          type_v->place.region = currRegion;
+          type_v->place.offset = getOffset(currRegion, &global, &local, &param, INT_SIZE);
+        break;
+        case DOUBLE_T:
+          type_v->place.region = currRegion;
+          type_v->place.offset = getOffset(currRegion, &global, &local, &param, DOUBLE_SIZE);
+        break;
+        case CHAR_T:
+        type_v->place.region = currRegion;
+        type_v->place.offset = getOffset(currRegion, &global, &local, &param, CHAR_SIZE);
+        break;
+        case BOOL_T:
+        type_v->place.region = currRegion;
+        type_v->place.offset = getOffset(currRegion, &global, &local, &param, INT_SIZE);
+        break;
+        case ARRAY_T:
+        break;
+        case FUNCTION_T:
+          printf("GOING INTO FUNCTION\n");
+          ht_set_size(type_v->u.function.sources, local, global, param, LOCAL_H);
+          printf("COMING OUT OF FUNCTION");
+
+        break;
+        case CLASS_T:
+          printf("going into private:\n\n");
+          ht_set_size(type_v->u.class.private, local, global, param, LOCAL_H);
+          printf("coming out of private\n\n");
+        break;
+
+        default:
+          fprintf(stderr, "Error  in switch statement of ht_set_size, base_type: %d\n", type_v->base_type);
+          exit(3);
+
     }
+
+
+
+
 
     //Iterate through list as well
     while(entry_v->next != NULL){
@@ -229,9 +264,105 @@ void ht_set_size(struct hashtable_s *hashtable){
 
       type_w = entry_v->value;
       printf("inside: %s: %d\n", entry_v->key, type_w->base_type);
+
+      switch(type_w->base_type){
+          case INT_T:
+            type_v->place.region = currRegion;
+            type_v->place.offset = getOffset(currRegion, &global, &local, &param, INT_SIZE);
+          break;
+          case DOUBLE_T:
+            type_v->place.region = currRegion;
+            type_v->place.offset = getOffset(currRegion, &global, &local, &param, DOUBLE_SIZE);
+          break;
+          case CHAR_T:
+          type_v->place.region = currRegion;
+          type_v->place.offset = getOffset(currRegion, &global, &local, &param, CHAR_SIZE);
+          break;
+          case BOOL_T:
+          type_v->place.region = currRegion;
+          type_v->place.offset = getOffset(currRegion, &global, &local, &param, INT_SIZE);
+          break;
+          case ARRAY_T:
+          break;
+          case FUNCTION_T:
+          break;
+          case CLASS_T:
+            printf("going into private:\n\n");
+            ht_set_size(type_v->u.class.private, local, global, param, LOCAL_H);
+            printf("coming out of private\n\n");
+          break;
+
+          default:
+            fprintf(stderr, "Error  in switch statement of ht_set_size, base_type: %d\n", type_v->base_type);
+            exit(3);
+
+      }
+
     }
 
+
+
   }
+
+
+}
+
+int getOffset(enum regions_h currRegion, int *global, int *local, int *param, int increment){
+  int retVal;
+  switch(currRegion){
+    case GLOBAL_H:
+      retVal = *global;
+      *global += increment;
+      break;
+    case LOCAL_H:
+      retVal = *local;
+      *local += increment;
+      break;
+    case PARAM_H:
+      retVal = *param;
+      *param += increment;
+      break;
+
+    default:
+      fprintf(stderr, "Error in getOffset\n");
+      exit(3);
+  }
+
+return retVal;
+}
+
+void printSize(struct hashtable_s *hashtable){
+
+
+  int size_h;
+  size_h = hashtable->size;
+
+  for(int k = 0; k < size_h; k++){
+    struct type120 *type_v;
+    struct entry_s *entry_v;
+
+    if(hashtable->table[k] == NULL){
+      continue;
+    }
+
+    type_v = hashtable->table[k]->value;
+    entry_v = hashtable->table[k];
+
+    //
+
+    if(type_v->base_type == CLASS_T){
+      printf("NULL VARIABLE: %s with basetype: %d\n", entry_v->key, type_v->base_type);
+    }
+    else if(type_v->base_type == FUNCTION_T){
+      printSize(type_v->u.function.sources);
+    }
+    else{
+      printf("Variable: %s has region %d with offset %d\n", entry_v->key, type_v->place.region, type_v->place.offset);
+    }
+
+
+  }
+
 
 
 }

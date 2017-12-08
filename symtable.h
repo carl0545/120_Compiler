@@ -5,6 +5,7 @@
 #include "hash.h"
 #include "tree.h"
 #include "list.h"
+#include "tac.h"
 
 
 enum types {
@@ -22,7 +23,7 @@ enum types {
 struct type120 {
    enum types base_type; //Contains Type name
    bool pointer; //true if pointer false if not
-   int size; //hold size of type
+   struct addr place; //hold region/offset
    union {
       struct arrayInfo {
          int size; /* allow for missing size, e.g. -1 */

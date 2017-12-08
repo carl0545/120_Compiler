@@ -96,7 +96,7 @@ void handle_literal(int literalE, struct tree *parseT){
       newType->base_type = DOUBLE_T;
       break;
     case CCON: //NOT WORKING
-
+      fprintf(stderr, "current error in handle_literal for CCON\n");
       exit(3);
       newType->base_type = CHAR_T;
       break;
