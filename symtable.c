@@ -85,6 +85,7 @@ void handle_literal(int literalE, struct tree *parseT){
 
   name = parseT->leaf->text;
   newType = malloc(sizeof(struct type120));
+  newType->isConst = true;
 
   newType->pointer = false;
 
@@ -542,6 +543,30 @@ void handle_c_func_def_constr(struct tree *parseT){
   curr = oldScope;
 
 }
+void handle_c_array_decl(struct tree *parseT){
+  struct type120 *newType, *innerType;
+  newType = malloc(sizeof(struct type120));
+  innerType = malloc(sizeof(struct type120));
+
+  newType->base_type = ARRAY_T;
+  newType->pointer = false;
+
+  if(parseT->kids[0]->kids[1]->kids[2] == NULL){
+    newType->u.array.size = 0;
+  }
+  else{
+    newType->u.array.size = parseT->kids[0]->kids[1]->kids[2]->leaf->ival;
+  }
+
+  innerType->base_type = find_base_type(parseT->kids[0]->kids[0]->leaf->category);
+
+  newType->u.array.elemtype = innerType;
+
+  ht_set(curr, parseT->kids[0]->kids[1]->kids[0]->leaf->text, newType);
+
+
+
+}
 
 void handle_member_spec1(struct tree *parseT, struct type120 *newType){
 
@@ -552,6 +577,9 @@ void handle_member_spec1(struct tree *parseT, struct type120 *newType){
     handle_c_func_def_constr(parseT->kids[0]->kids[0]);
   }
   else if(parseT->kids[0]->kids[1]->prodrule == direct_declarator){
+    if(parseT->kids[0]->kids[1]->kids[1]->prodrule == LB){
+      handle_c_array_decl(parseT);
+    }
     //printf("CLASS direct_declarator\n");
     handle_c_func_decl(parseT);
     //exit(3);

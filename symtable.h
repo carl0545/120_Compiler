@@ -24,6 +24,7 @@ enum types {
 struct type120 {
    enum types base_type; //Contains Type name
    bool pointer; //true if pointer false if not
+   bool isConst; //true if a const value
    struct addr place; //hold region/offset
    union {
       struct arrayInfo {
@@ -62,6 +63,7 @@ void handle_func_def(struct tree*);
 void handle_class_spec(struct tree*);
 void handle_member_spec1(struct tree*, struct type120*);
 void handle_member_spec2(struct tree*, struct type120*);
+void handle_c_array_decl(struct tree*);
 void handle_c_func_decl(struct tree*);
 void handle_c_func_def(struct tree*, bool);
 void handle_c_func_decl_inner(struct tree*);

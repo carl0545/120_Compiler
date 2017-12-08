@@ -42,11 +42,15 @@ int ht_hash(struct hashtable_s *hashtable, char *key); //Hash a string for a par
 struct entry_s *ht_newpair(char *key, struct type120 *value);//Create a new entry node
 void ht_set(struct hashtable_s *hashtable, char *key, struct type120 *value);//Insert an entry into hash table
 struct type120 *ht_get(struct hashtable_s *hashtable, char *key);//Retrieve a node
-void ht_set_size(struct hashtable_s *hashtable, int local, int global, int parameter, enum regions_h currRegion); //Assigns the size attribute to every sym table entry
 
-int getOffset(enum regions_h currRegion, int *global, int *local, int *param, int increment);
+int ht_set_size(struct hashtable_s *hashtable, int *local, int *global, int *parameter, enum regions_h currRegion); //Assigns the size attribute to every sym table entry
+
+int getOffset(enum regions_h currRegion, int *global, int *local, int *param, int increment, int *total);
 void printSize(struct hashtable_s *hashtable);
 int getArrayType(int baseT);
-void arrayOffset(enum regions_h currRegion, int *global, int *local, int *param, int increment, int size_a);
+void arrayOffset(enum regions_h currRegion, int *global, int *local, int *param, int increment, int size_a, int *total);
+int classOffsetHelp(int size_c, enum regions_h currRegion, int global, int local, int param);
+
+
 
 #endif

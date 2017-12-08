@@ -47,7 +47,12 @@ int main(int argc, char *argv[]) {
     type_check(rootCpy);
 
     fprintf(stdout, "Setting the size\n");
-    ht_set_size(global, 0, 0, 0, GLOBAL_H);
+    int global_s = 0;
+    int local_s = 0;
+    int param_s = 0;
+
+
+    ht_set_size(global, &global_s, &local_s , &param_s, GLOBAL_H);
 
     printf("PRINTING SYMBOL TABLE SIZE\n\n\n");
     printSize(global);
