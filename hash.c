@@ -353,24 +353,6 @@ int ht_set_size(struct hashtable_s *hashtable, int *local, int *global, int *par
   return totalsize;
 }
 
-int classOffsetHelp(int size_c, enum regions_h currRegion, int global, int local, int param){
-
-  switch(currRegion){
-    case GLOBAL_H:
-      return global;
-      break;
-    case LOCAL_H:
-      return local;
-      break;
-    case PARAM_H:
-      return param;
-      break;
-
-    default:
-      fprintf(stderr, "Error classOffsetHelp\n");
-      exit(3);
-  }
-}
 
 void arrayOffset(enum regions_h currRegion, int *global, int *local, int *param, int increment, int size_a, int *total){
   size_a = size_a - 1;

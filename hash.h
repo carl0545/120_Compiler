@@ -49,7 +49,6 @@ int getOffset(enum regions_h currRegion, int *global, int *local, int *param, in
 void printSize(struct hashtable_s *hashtable);
 int getArrayType(int baseT);
 void arrayOffset(enum regions_h currRegion, int *global, int *local, int *param, int increment, int size_a, int *total);
-int classOffsetHelp(int size_c, enum regions_h currRegion, int global, int local, int param);
 
 
 
