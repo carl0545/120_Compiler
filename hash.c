@@ -199,6 +199,8 @@ struct type120 *ht_get(struct hashtable_s *hashtable, char *key){
 
 }
 
+
+/*
 int ht_set_size(struct hashtable_s *hashtable, int *local, int *global, int *param, enum regions_h currRegion){
   int size_h;
   size_h = hashtable->size;
@@ -322,9 +324,8 @@ int ht_set_size(struct hashtable_s *hashtable, int *local, int *global, int *par
 
           break;
           case FUNCTION_T:
-            printf("GOING INTO FUNCTION\n");
             ht_set_size(type_v->u.function.sources, local, global, param, LOCAL_H);
-            printf("COMING OUT OF FUNCTION");
+            //create a function to deal with parameters of a function
 
           break;
           case CLASS_T:{
@@ -352,6 +353,7 @@ int ht_set_size(struct hashtable_s *hashtable, int *local, int *global, int *par
 
   return totalsize;
 }
+
 
 
 void arrayOffset(enum regions_h currRegion, int *global, int *local, int *param, int increment, int size_a, int *total){
@@ -476,3 +478,4 @@ void printSize(struct hashtable_s *hashtable){
 
 
 }
+*/

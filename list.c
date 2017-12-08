@@ -29,6 +29,10 @@ void add(struct listnode **head, struct type120 *type_a){
 *print out the elements within a list
 */
 void printList(struct listnode *head){
+  if(head == NULL){
+    return;
+  }
+
   struct listnode *traverse;
   traverse = head;
   int count = 1;
@@ -43,6 +47,10 @@ void printList(struct listnode *head){
 }
 
 int listSize(struct listnode *head){
+  if(head == NULL){
+    return 0;
+  }
+
   struct listnode *traverse;
   traverse = head;
   int count = 0;
@@ -57,6 +65,10 @@ int listSize(struct listnode *head){
 }
 
 struct type120* listGet(struct listnode *head, int elem){
+  if(head == NULL){
+    return NULL;
+  }
+
   struct listnode *traverse, *prev;
   traverse = head;
 

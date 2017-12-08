@@ -9,7 +9,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <limits.h>
+#include "list.h"
 #include "symtable.h"
+
+
 
 #define INT_SIZE 8
 #define DOUBLE_SIZE 8
@@ -43,13 +46,17 @@ struct entry_s *ht_newpair(char *key, struct type120 *value);//Create a new entr
 void ht_set(struct hashtable_s *hashtable, char *key, struct type120 *value);//Insert an entry into hash table
 struct type120 *ht_get(struct hashtable_s *hashtable, char *key);//Retrieve a node
 
+
+/*
 int ht_set_size(struct hashtable_s *hashtable, int *local, int *global, int *parameter, enum regions_h currRegion); //Assigns the size attribute to every sym table entry
+
+
 
 int getOffset(enum regions_h currRegion, int *global, int *local, int *param, int increment, int *total);
 void printSize(struct hashtable_s *hashtable);
 int getArrayType(int baseT);
 void arrayOffset(enum regions_h currRegion, int *global, int *local, int *param, int increment, int size_a, int *total);
 
-
+*/
 
 #endif

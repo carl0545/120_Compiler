@@ -3,6 +3,7 @@
 #include "tree.h"
 #include "symtable.h"
 #include "type.h"
+#include "intermediate.h"
 
 extern int yyparse();
 extern int yylex();

@@ -2,6 +2,7 @@
 #define TREE_H
 
 #include "token.h"
+#include "tac.h"
 
 struct tree{
   int leafCheck; // 0 for not leaf 1 for leaf

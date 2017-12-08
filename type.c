@@ -178,6 +178,10 @@ void func_param(struct tree *parseT){
   struct type120 *declared, *param, *check;
   struct listnode *list_c;
 
+  if(parseT->kids[1]->prodrule == LB){
+    return;
+  }
+
   if(parseT->kids[0]->prodrule == postfix_expression-2){
     class_func_helper(parseT);
     return;

@@ -8,8 +8,8 @@ all: 120
 .c.o:
 	$(CC) -c $(CFLAGS) $<
 
-120: main.o 120gram.o 120lex.o tree.o hash.o symtable.o list.o type.o
-	$(CC) -Wall -o 120 main.o 120gram.o 120lex.o tree.o hash.o symtable.o list.o type.o
+120: main.o 120gram.o 120lex.o tree.o hash.o symtable.o list.o type.o tac.o intermediate.o
+	$(CC) -Wall -o 120 main.o 120gram.o 120lex.o tree.o hash.o symtable.o list.o type.o tac.o intermediate.o
 
 120gram.c 120gram.h: 120gram.y
 	$(YACC) -dt --verbose 120gram.y
@@ -33,6 +33,10 @@ list.o: list.h
 symtable.o: symtable.h
 
 type.o: type.h
+
+tac.o: tac.h
+
+intermediate.o: intermediate.h
 
 
 clean:
