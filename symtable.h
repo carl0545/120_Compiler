@@ -20,6 +20,7 @@ enum types {
   UNKNOWN_T
 } types;
 
+
 struct type120 {
    enum types base_type; //Contains Type name
    bool pointer; //true if pointer false if not

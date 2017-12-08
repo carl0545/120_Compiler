@@ -46,5 +46,7 @@ void ht_set_size(struct hashtable_s *hashtable, int local, int global, int param
 
 int getOffset(enum regions_h currRegion, int *global, int *local, int *param, int increment);
 void printSize(struct hashtable_s *hashtable);
+int getArrayType(int baseT);
+void arrayOffset(enum regions_h currRegion, int *global, int *local, int *param, int increment, int size_a);
 
 #endif

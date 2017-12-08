@@ -221,19 +221,31 @@ void ht_set_size(struct hashtable_s *hashtable, int local, int global, int param
           type_v->place.region = currRegion;
           type_v->place.offset = getOffset(currRegion, &global, &local, &param, INT_SIZE);
         break;
+
         case DOUBLE_T:
           type_v->place.region = currRegion;
           type_v->place.offset = getOffset(currRegion, &global, &local, &param, DOUBLE_SIZE);
         break;
+
         case CHAR_T:
         type_v->place.region = currRegion;
         type_v->place.offset = getOffset(currRegion, &global, &local, &param, CHAR_SIZE);
         break;
+
         case BOOL_T:
         type_v->place.region = currRegion;
         type_v->place.offset = getOffset(currRegion, &global, &local, &param, INT_SIZE);
         break;
-        case ARRAY_T:
+
+        case ARRAY_T: {
+        int size_a = type_v->u.array.size;
+        int increment_a = getArrayType(type_v->u.array.elemtype->base_type);
+        type_v->place.region = currRegion;
+        type_v->place.offset = size_a * getOffset(currRegion, &global, &local, &param, increment_a);
+        arrayOffset(currRegion, &global, &local, &param, increment_a, size_a);
+        break;
+        }
+
         break;
         case FUNCTION_T:
           printf("GOING INTO FUNCTION\n");
@@ -270,21 +282,36 @@ void ht_set_size(struct hashtable_s *hashtable, int local, int global, int param
             type_v->place.region = currRegion;
             type_v->place.offset = getOffset(currRegion, &global, &local, &param, INT_SIZE);
           break;
+
           case DOUBLE_T:
             type_v->place.region = currRegion;
             type_v->place.offset = getOffset(currRegion, &global, &local, &param, DOUBLE_SIZE);
           break;
+
           case CHAR_T:
           type_v->place.region = currRegion;
           type_v->place.offset = getOffset(currRegion, &global, &local, &param, CHAR_SIZE);
           break;
+
           case BOOL_T:
           type_v->place.region = currRegion;
           type_v->place.offset = getOffset(currRegion, &global, &local, &param, INT_SIZE);
           break;
-          case ARRAY_T:
+
+          case ARRAY_T: {
+          int size_a = type_v->u.array.size;
+          int increment_a = getArrayType(type_v->u.array.elemtype->base_type);
+          type_v->place.region = currRegion;
+          type_v->place.offset = size_a * getOffset(currRegion, &global, &local, &param, increment_a);
+          arrayOffset(currRegion, &global, &local, &param, increment_a, size_a);
           break;
+          }
+
           case FUNCTION_T:
+            printf("GOING INTO FUNCTION\n");
+            ht_set_size(type_v->u.function.sources, local, global, param, LOCAL_H);
+            printf("COMING OUT OF FUNCTION");
+
           break;
           case CLASS_T:
             printf("going into private:\n\n");
@@ -305,6 +332,57 @@ void ht_set_size(struct hashtable_s *hashtable, int local, int global, int param
   }
 
 
+}
+
+void arrayOffset(enum regions_h currRegion, int *global, int *local, int *param, int increment, int size_a){
+  size_a = size_a-1;
+  switch(currRegion){
+    case GLOBAL_H:
+
+      *global += increment * size_a;
+      break;
+    case LOCAL_H:
+
+      *local += increment * size_a;
+      break;
+    case PARAM_H:
+
+      *param += increment * size_a;
+      break;
+
+    default:
+      fprintf(stderr, "Error in arrayOffset\n");
+      exit(3);
+  }
+
+}
+
+int getArrayType(int baseT){
+  switch(baseT){
+
+    case 0: //INT_T
+      return INT_SIZE;
+      break;
+    case 1: //DOUBLE_T
+      return DOUBLE_SIZE;
+      break;
+    case 2: //CHAR_T
+      return CHAR_SIZE;
+      break;
+    case 3: //BOOL_T
+      return INT_SIZE;
+      break;
+    case 6: //CLASS_T
+      fprintf(stderr, "CLASS ARRAY SIZE not implemented in getArraytype\n");
+      exit(3);
+      break;
+    default:
+      fprintf(stderr, "ERROR IN getArrayType\n");
+      exit(3);
+
+  }
+
+return -1;
 }
 
 int getOffset(enum regions_h currRegion, int *global, int *local, int *param, int increment){
