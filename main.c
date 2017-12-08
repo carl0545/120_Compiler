@@ -46,8 +46,8 @@ int main(int argc, char *argv[]) {
     init_type();
     type_check(rootCpy);
 
-    fprintf(stdout, "Setting the size\n");
-    ht_set_size(global);
+    //fprintf(stdout, "Setting the size\n");
+    //ht_set_size(global);
 
 
 

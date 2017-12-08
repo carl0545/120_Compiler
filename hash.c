@@ -231,13 +231,7 @@ void ht_set_size(struct hashtable_s *hashtable){
       printf("inside: %s: %d\n", entry_v->key, type_w->base_type);
     }
 
-
-
-
   }
-
-
-
 
 
 }
