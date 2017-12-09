@@ -44,6 +44,7 @@ void place_helper(struct tree *parseT);
 void print_main(struct instr *head, FILE *fpi);
 void print_instr(struct instr *head, FILE *fpi);
 void print_region_helper(FILE *fpi, int reg, int off);
+void global_print_helper(struct hashtable_s *scopeG, FILE *fpi);
 
 
 

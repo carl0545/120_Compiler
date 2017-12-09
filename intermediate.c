@@ -52,9 +52,64 @@ void codeGen(struct tree *parseT){
 }
 
 void print_main(struct instr *head, FILE *fpi){
+
+  fprintf(fpi, ".global\n");
+
+  global_print_helper(global, fpi);
+
+
   fprintf(fpi, ".code\n");
 
   print_instr(head, fpi);
+
+
+}
+
+void global_print_helper(struct hashtable_s *scopeG, FILE *fpi){
+  if(scopeG == NULL){
+    return;
+  }
+
+  int size_h;
+  size_h = scopeG->size;
+
+
+  for(int k = 0; k < size_h; k++){
+    struct type120 *type_v;
+    struct entry_s *entry_v;
+
+    if(scopeG->table[k] == NULL){
+      continue;
+    }
+
+
+
+    type_v = scopeG->table[k]->value;
+    entry_v = scopeG->table[k];
+
+    if(type_v->isConst){
+      continue;
+    }
+
+    if(type_v->base_type == FUNCTION_T){
+      continue;
+    }
+
+    int size_o;
+
+    if(type_v->base_type == CHAR_T){
+      size_o = 1;
+    }
+    else{
+      size_o = 8;
+    }
+
+    fprintf(fpi, "  %s/%d/%d\n", entry_v->key, type_v->place.offset, size_o);
+
+
+
+
+  }
 
 
 }
@@ -77,16 +132,18 @@ void print_instr(struct instr *head, FILE *fpi){
   }
 
 
-  fprintf(fpi, "  ");
+
 
   switch (op_i) {
     case O_ASN:
+      fprintf(fpi, "  ");
       fprintf(fpi, "O_ASN ");
       print_region_helper(fpi, dest_i->region, dest_i->offset);
       print_region_helper(fpi, src1_i->region, src1_i->offset);
       fprintf(fpi, "\n");
       break;
     case O_RET:
+      fprintf(fpi, "  ");
       fprintf(fpi, "O_RET ");
       print_region_helper(fpi, dest_i->region, dest_i->offset);
       fprintf(fpi, "\n");
