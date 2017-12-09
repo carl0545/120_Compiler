@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include "tac.h"
 
-struct instr *gen(int op, struct addr a1, struct addr a2, struct addr a3)
+struct instr *gen(int op, struct addr *a1, struct addr *a2, struct addr *a3)
 {
   struct instr *rv = malloc(sizeof (struct instr));
   if (rv == NULL) {
@@ -18,6 +18,21 @@ struct instr *gen(int op, struct addr a1, struct addr a2, struct addr a3)
   rv->src2 = a3;
   rv->next = NULL;
   return rv;
+}
+
+struct instr *proc_gen(int op, char *name){
+  struct instr *rv = malloc(sizeof (struct instr));
+
+  if (rv == NULL) {
+     fprintf(stderr, "out of memory\n");
+     exit(4);
+  }
+
+  rv->opcode = op;
+  rv->proc_name = name;
+
+  return rv;
+
 }
 
 struct instr *copylist(struct instr *l)
@@ -40,4 +55,9 @@ struct instr *append(struct instr *l1, struct instr *l2)
 struct instr *concat(struct instr *l1, struct instr *l2)
 {
    return append(copylist(l1), l2);
+}
+
+struct instr *precat(struct instr *l1, struct instr *l2)
+{
+   return append(l2, copylist(l1));
 }

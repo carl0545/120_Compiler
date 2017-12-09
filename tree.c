@@ -52,10 +52,24 @@ int treeprint(struct tree *t, int depth)
     return 0;
   }
 if(t->nkids != 0){
- printf("%*s %s: %d\n", depth*2, " ", humanreadable(t->prodrule), t->nkids);
+ printf("%*s %s: %d", depth*2, " ", humanreadable(t->prodrule), t->nkids);
+ if(t->first != NULL){
+   printf(" With first: %d ", t->first->offset);
+ }
+ if(t->follow != NULL){
+   printf(" With follow: %d ", t->follow->offset);
+ }
+ printf("\n");
 }
 else{
-  printf("%*s leaf: %s\n", depth*2, " ",t->leaf->text);
+  printf("%*s leaf: %s", depth*2, " ",t->leaf->text);
+  if(t->first != NULL){
+    printf(" With first: %d ", t->first->offset);
+  }
+  if(t->follow != NULL){
+    printf(" With follow: %d ", t->follow->offset);
+  }
+  printf("\n");
 }
  for(i=0; i<t->nkids; i++)
    treeprint(t->kids[i], depth+1);
@@ -171,6 +185,8 @@ char *humanreadable(int prod){
  case -51000 :
  return "compound_statement";
  case -52000 :
+ return "statement_seq";
+ case -52001 :
  return "statement_seq";
  case -53000 :
  return "selection_statement";

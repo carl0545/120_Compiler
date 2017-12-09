@@ -748,6 +748,9 @@ void type_compare(int operand, struct type120 *type1, struct type120 *type2){
     enum types leftT, rightT;
 
     leftT = type1->base_type;
+
+    if(type2 == NULL) return;
+
     rightT = type2->base_type;
 
     if(rightT == FUNCTION_T){

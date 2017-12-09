@@ -830,6 +830,7 @@ void handle_func_def(struct tree *parseT){
 
   checkDec = ht_get(curr, checker->kids[0]->leaf->text);
 
+  /*
   if(checkDec->pointer == checkDefin->pointer){
     if(checkDec->base_type == checkDefin->base_type){
       //we made it
@@ -850,6 +851,7 @@ void handle_func_def(struct tree *parseT){
     fprintf(stderr, "SEMANTIC ERROR: Function declaration and definition params have different counts\n");
     exit(3);
   }
+  */
 
 
   //Enter the function scope, change scope of curr and recursively call populateSymbolTable

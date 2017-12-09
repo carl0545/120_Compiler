@@ -731,7 +731,7 @@ extern int typenametable_lookup(char *s);
 
  labeled_statement:
       identifier COLON statement           { $$ = createTreeNode(labeled_statement, 3, $1, $2, $3); }
-    | CASE constant_expression COLON statement           { $$ = createTreeNode(labeled_statement, 4, $1, $2, $3, $4); }
+    | CASE constant_expression COLON statement           { $$ = createTreeNode(labeled_statement-1, 4, $1, $2, $3, $4); }
     | DEFAULT COLON statement           { $$ = createTreeNode(labeled_statement, 3, $1, $2, $3); }
     ;
 
@@ -748,7 +748,7 @@ extern int typenametable_lookup(char *s);
 
  statement_seq:
       statement           { $$ = createTreeNode(statement_seq, 1, $1); }
-    | statement_seq statement           { $$ = createTreeNode(statement_seq, 2, $1, $2); }
+    | statement_seq statement           { $$ = createTreeNode(statement_seq-1, 2, $1, $2); }
     ;
 
 

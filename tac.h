@@ -15,10 +15,13 @@ struct addr {
 #define R_LABEL  2004 /* pseudo-region for labels in the code region */
 #define R_CONST  2005 /* pseudo-region for immediate mode constants */
 #define R_PARAM  2006 /* pseduo-region for parameters */
+#define R_CONSTC 2007 /* pseduo-region for character const */
+#define R_FLOAT  2008 /* pseduo-region for float const */
 
 struct instr {
    int opcode;
-   struct addr dest, src1, src2;
+   char *proc_name;
+   struct addr *dest, *src1, *src2;
    struct instr *next;
 };
 /* Opcodes, per lecture notes */
@@ -50,7 +53,9 @@ struct instr {
 #define D_LABEL 3054
 #define D_END   3055
 
-struct instr *gen(int, struct addr, struct addr, struct addr);
+struct instr *gen(int, struct addr*, struct addr*, struct addr*);
 struct instr *concat(struct instr *, struct instr *);
+struct instr *precat(struct instr *, struct instr *);
+struct instr *proc_gen(int, char*);
 
 #endif

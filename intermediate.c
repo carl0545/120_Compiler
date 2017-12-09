@@ -1,5 +1,402 @@
 /* INTERMEDIATE.C */
 #include "intermediate.h"
+#include "nonterms.h"
+#include "120gram.h"
+
+void codeGen(struct tree *parseT){
+  int i;
+  if (parseT == NULL){
+    return;
+  }
+
+  for(i = 0; i < parseT->nkids; i++){
+    codeGen(parseT->kids[i]);
+  }
+
+  switch (parseT->prodrule) {
+
+    case assignment_expression:
+      parseT->place = parseT->kids[0]->place;
+      parseT->code = concat(parseT->kids[2]->code, gen(O_ASN, parseT->kids[0]->place, parseT->kids[2]->place, NULL));
+      break;
+
+    case jump_statement:
+      parseT->code = concat(parseT->kids[1]->code, gen(O_RET, parseT->kids[1]->place, NULL, NULL));
+      break;
+
+    case function_definition-1:
+      parseT->code = precat(parseT->kids[3]->code, proc_gen(D_PROC, parseT->kids[1]->kids[0]->leaf->text));
+      break;
+
+
+      /*
+    case IDENTIFIER:
+      parseT->code = NULL;
+      break;
+      */
+
+    default:
+      /* default is: concatenate our children's code */
+      parseT->code = NULL;
+      printf("hmmm: %d\n", parseT->prodrule);
+      for(i=0; i < parseT->nkids; i++){
+         if(parseT->kids[i] == NULL){
+            continue;
+         }
+         parseT->code = concat(parseT->code, parseT->kids[i]->code);
+      }
+
+  }
+
+
+}
+
+void print_main(struct instr *head, FILE *fpi){
+  fprintf(fpi, ".code\n");
+
+  print_instr(head, fpi);
+
+
+}
+
+void print_instr(struct instr *head, FILE *fpi){
+  if(head == NULL)
+    return;
+
+  int op_i;
+  struct addr *dest_i, *src1_i, *src2_i;
+
+
+  op_i = head->opcode;
+
+  if(op_i < D_GLOB){
+
+    dest_i = head->dest;
+    src1_i = head->src1;
+    src2_i = head->src2;
+  }
+
+
+  fprintf(fpi, "  ");
+
+  switch (op_i) {
+    case O_ASN:
+      fprintf(fpi, "O_ASN ");
+      print_region_helper(fpi, dest_i->region, dest_i->offset);
+      print_region_helper(fpi, src1_i->region, src1_i->offset);
+      fprintf(fpi, "\n");
+      break;
+    case O_RET:
+      fprintf(fpi, "O_RET ");
+      print_region_helper(fpi, dest_i->region, dest_i->offset);
+      fprintf(fpi, "\n");
+      break;
+    case D_PROC:
+      fprintf(fpi, "%s:", head->proc_name);
+      fprintf(fpi, "\n");
+      break;
+
+  }
+
+  print_instr(head->next, fpi);
+
+
+}
+
+void print_region_helper(FILE *fpi, int reg, int off){
+
+  switch(reg){
+    case R_GLOBAL:
+      fprintf(fpi, " global:%d, ", off);
+      break;
+    case R_LOCAL:
+      fprintf(fpi, " local:%d, ", off);
+      break;
+    case R_CLASS:
+      fprintf(fpi, " class:%d, ", off);
+      break;
+    case R_LABEL:
+      fprintf(fpi, " label:%d, ", off);
+      break;
+    case R_CONST:
+      fprintf(fpi, " const:%d, ", off);
+      break;
+    case R_PARAM:
+      fprintf(fpi, " param:%d, ", off);
+      break;
+    case R_CONSTC:
+      fprintf(fpi, " chconst:%d, ", off);
+      break;
+    case R_FLOAT:
+      fprintf(fpi, " fconst:%d, ", off);
+      break;
+    default:
+      fprintf(stderr, "ERROR IN print_region_helper\n");
+      exit(5);
+
+  }
+
+
+}
+
+void init_imd_globals(){
+  label_counter = 0;
+  global_r_counter = 0;
+  local_r_counter = 0;
+  param_r_counter = 0;
+  float_r_counter = 0;
+
+  i_scope = global;
+
+  if(i_scope == NULL){
+    fprintf(stderr, "ERROR in init_imd_globals, i_scope is null\n");
+  }
+
+}
+
+struct addr* label_create(){
+  struct addr *lab = addr_create(R_LOCAL, label_counter);
+  label_counter++;
+  return lab;
+}
+
+struct addr* addr_create(int reg, int offs){
+  struct addr* newAddr;
+  newAddr = malloc(sizeof(struct addr));
+
+  newAddr->region = reg;
+  newAddr->offset = offs;
+
+  return newAddr;
+}
+
+void gen_place(struct tree *parseT){
+  int i;
+
+  if(parseT == NULL){
+    return;
+  }
+
+  switch(parseT->prodrule){
+    case IDENTIFIER:
+      place_helper(parseT);
+      break;
+    case function_definition-1:{
+      struct type120 *scopeH;
+
+      scopeH = ht_get(i_scope, parseT->kids[1]->kids[0]->leaf->text);
+      i_scope = scopeH->u.function.sources;
+      }
+      break;
+    case ICON:{
+      struct addr *newA;
+
+      newA = addr_create(R_CONST, parseT->leaf->ival);
+      parseT->place = newA;
+      parseT->code = NULL;
+      }
+      break;
+    case CCON:{
+      struct addr *newA;
+      int charac = (int) parseT->leaf->text[0];
+
+      newA = addr_create(R_CONSTC, charac);
+      parseT->place = newA;
+      parseT->code = NULL;
+      }
+      break;
+    case FCON:{
+      struct addr *newA;
+
+      newA = addr_create(R_FLOAT, float_r_counter);
+      float_r_counter += 8;
+      parseT->place = newA;
+      parseT->code = NULL;
+      }
+      break;
+    case STRING:
+      break;
+
+
+  }
+
+
+  for(i = 0; i < parseT->nkids; i++){
+     gen_place(parseT->kids[i]);
+  }
+
+
+
+
+}
+
+
+void gen_temp(struct tree *parseT){
+  int i;
+
+  if(parseT == NULL){
+    return;
+  }
+
+  switch(parseT->prodrule){
+    case additive_expression:{
+      struct addr *temp_v;
+      temp_v = temp_create();
+
+      parseT->place = temp_v;
+
+      break;
+    }
+    case multiplicative_expression:{
+      struct addr *temp_v;
+      temp_v = temp_create();
+
+      parseT->place = temp_v;
+
+      break;
+    }
+
+  }
+
+
+
+  for(i = 0; i < parseT->nkids; i++){
+     gen_temp(parseT->kids[i]);
+  }
+
+
+
+
+}
+
+void place_helper(struct tree *parseT){
+  struct addr *newPlace, *oldPlace;
+  struct type120 *ident;
+  int nReg, nOff;
+
+  ident = ht_get(i_scope, parseT->leaf->text);
+
+  if(ident == NULL){
+    return;
+  }
+
+  printf("OKAY ONE SEC: %s\n",parseT->leaf->text);
+
+  if(ident->base_type == FUNCTION_T)
+    return;
+
+
+  oldPlace = addr_create(ident->place.region, ident->place.offset);
+
+  nOff = oldPlace->offset;
+
+  printf("OKAY WAIT A MINTE: %d\n", oldPlace->region);
+  switch(oldPlace->region){
+    case 0: //GLOBAL_H:
+      nReg = R_GLOBAL;
+      break;
+    case 1: //LOCAL_H:
+      nReg = R_LOCAL;
+      break;
+    case 2: //PARAM_H:
+      nReg = R_PARAM;
+      break;
+  }
+
+  newPlace = addr_create(nReg, nOff);
+
+  parseT->place = newPlace;
+
+}
+
+void gen_follows(struct tree *parseT){
+  int i;
+
+  if(parseT == NULL){
+     return;
+  }
+
+   switch (parseT->prodrule) {
+    case statement_seq-1: /* statement_seq : statement_seq statement */
+      parseT->kids[0]->follow = parseT->kids[1]->first;
+	    parseT->kids[1]->follow = parseT->follow;
+   	  break;
+    case compound_statement: /* compstmt : '{' statement_seq_opt '}' */
+      if (parseT->kids[1] != NULL)
+        parseT->kids[1]->follow = parseT->follow;
+   	  break;
+    case function_definition-1: /* funcdef : declarator ctor_init_opt body */
+      parseT->kids[3]->follow = label_create();
+      /* .code must have this label and a return at the end! */
+   	  break;
+   /* ... other cases? ... */
+    default:
+      break;
+   }
+
+
+
+   for(i = 0; i < parseT->nkids; i++){
+      gen_follows(parseT->kids[i]);
+   }
+
+
+}
+
+struct addr* temp_create(){
+  struct addr *newTemp = addr_create(R_LOCAL, local_r_counter);
+  local_r_counter += 8;
+  return newTemp;
+}
+
+void gen_first(struct tree *parseT){
+  if(parseT == NULL){
+    return;
+  }
+  int i;
+
+  for(i=0; i < parseT->nkids; i++){
+    gen_first(parseT->kids[i]);
+  }
+
+  switch (parseT->prodrule) {
+     case labeled_statement:
+        parseT->first = parseT->kids[2]->first;
+        break;
+     case labeled_statement-1:
+        parseT->first = parseT->kids[3]->first;
+        break;
+     case expression_statement:
+        parseT->first = label_create();
+        break;
+
+     case compound_statement:
+        parseT->first = label_create();
+        break;
+
+     case selection_statement:
+        parseT->first = label_create();
+        break;
+
+     case iteration_statement:
+        parseT->first = label_create();
+        break;
+
+     case jump_statement:
+        parseT->first = label_create();
+        break;
+
+     case declaration_statement:
+        parseT->first = label_create();
+        break;
+     default:
+        break;
+     }
+
+}
+
+
+
 
 int ht_set_size(struct hashtable_s *hashtable, int *local, int *global, int *param, enum regions_h currRegion){
   if(hashtable == NULL){
@@ -28,7 +425,7 @@ int ht_set_size(struct hashtable_s *hashtable, int *local, int *global, int *par
       continue;
     }
 
-    printf("%s: %d\n", hashtable->table[k]->key ,type_v->base_type);
+    //printf("%s: %d\n", hashtable->table[k]->key ,type_v->base_type);
 
     switch(type_v->base_type){
         case INT_T:
@@ -370,57 +767,3 @@ void printParam(struct listnode *head, struct entry_s *entry_v){
   }
 
 }
-
-
-
-
-
-
-/* /////
-void codegen(struct tree *parseT){
-
-
-  int i, j;
-  if (parseT==NULL) return;
-
-  /*
-   * this is a post-order traversal, so visit children first
-   */
-
-
-/* ////////
-  for(i=0;i<parseT->nkids;i++)
-     codegen(parseT->kids[i]);
-
-  /*
-   * back from children, consider what we have to do with
-   * this node. The main thing we have to do, one way or
-   * another, is assign t->code
-   */
-
-/* //////
-  switch (parseT->prodrule) {
-  case PLUS: {
-     parseT->code = concat(parseT->kids[0].code, parseT->kids[1].code);
-     g = gen(PLUS, parseT->address,
-             parseT->kids[0].address, parseT->kids[1].address);
-     parseT->code = concat(parseT->code, g);
-     break;
-     }
-  /*
-   * ... really, a bazillion cases, up to one for each
-   * production rule (in the worst case)
-   */
-
-/* ////////
-  default:
-     /* default is: concatenate our children's code */
-/* ///////
-     parseT->code = NULL;
-     for(i=0;i<t->nkids;i++)
-        parseT->code = concat(parseT->code, parseT->kids[i].code);
-  }
-
-
-}
-*/
