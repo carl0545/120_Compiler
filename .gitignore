@@ -1,4 +1,5 @@
 *.o
+*.ic
 120
 120gram.c
 120gram.h
