@@ -43,6 +43,27 @@ void codeGen(struct tree *parseT){
       parseT->code = concat(tempCode, gen(opC, parseT->place, parseT->kids[0]->place, parseT->kids[2]->place));
       break;
     }
+    case multiplicative_expression:{
+      int opC;
+      struct instr *tempCode;
+
+      if(parseT->kids[1]->prodrule == MUL){
+        opC = O_MUL;
+      }
+      else{
+        opC = O_DIV;
+      }
+
+      tempCode = concat(parseT->kids[0]->code, parseT->kids[2]->code);
+      parseT->code = concat(tempCode, gen(opC, parseT->place, parseT->kids[0]->place, parseT->kids[2]->place));
+    }
+    break;
+    case primary_expression:{
+      parseT->place = parseT->kids[1]->place;
+      parseT->code = parseT->kids[1]->code;
+
+    }
+    break;
     default:
       /* default is: concatenate our children's code */
       parseT->code = NULL;
@@ -165,6 +186,22 @@ void print_instr(struct instr *head, FILE *fpi){
       fprintf(fpi, "\n");
       break;
     case O_SUB:
+      fprintf(fpi, "  ");
+      fprintf(fpi, "O_SUB ");
+      print_region_helper(fpi, dest_i->region, dest_i->offset);
+      print_region_helper(fpi, src1_i->region, src1_i->offset);
+      print_region_helper(fpi, src2_i->region, src2_i->offset);
+      fprintf(fpi, "\n");
+      break;
+    case O_MUL:
+      fprintf(fpi, "  ");
+      fprintf(fpi, "O_MUL ");
+      print_region_helper(fpi, dest_i->region, dest_i->offset);
+      print_region_helper(fpi, src1_i->region, src1_i->offset);
+      print_region_helper(fpi, src2_i->region, src2_i->offset);
+      fprintf(fpi, "\n");
+      break;
+    case O_DIV:
       fprintf(fpi, "  ");
       fprintf(fpi, "O_SUB ");
       print_region_helper(fpi, dest_i->region, dest_i->offset);

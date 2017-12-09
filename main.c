@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
     fprintf(stdout, "Opening: %s\n", argv[i]);
 
     yyparse();
-    //treeprint(root, 0);
+    treeprint(root, 0);
 
     fprintf(stdout, "Populating Symbol Table...\n");
     rootCpy = root;
@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
 
     print_main(rootCpy->code, interF);
 
-    treeprint(rootCpy, 0);
+    //treeprint(rootCpy, 0);
 
     printf("PRINTING SYMBOL TABLE SIZE\n\n\n");
     printSize(global);
