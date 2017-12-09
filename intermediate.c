@@ -28,13 +28,21 @@ void codeGen(struct tree *parseT){
       parseT->code = precat(parseT->kids[3]->code, proc_gen(D_PROC, parseT->kids[1]->kids[0]->leaf->text));
       break;
 
+    case additive_expression:{
+      int opC;
+      struct instr *tempCode;
 
-      /*
-    case IDENTIFIER:
-      parseT->code = NULL;
+      if(parseT->kids[1]->prodrule == PLUS){
+        opC = O_ADD;
+      }
+      else{
+        opC = O_SUB;
+      }
+
+      tempCode = concat(parseT->kids[0]->code, parseT->kids[2]->code);
+      parseT->code = concat(tempCode, gen(opC, parseT->place, parseT->kids[0]->place, parseT->kids[2]->place));
       break;
-      */
-
+    }
     default:
       /* default is: concatenate our children's code */
       parseT->code = NULL;
@@ -146,6 +154,22 @@ void print_instr(struct instr *head, FILE *fpi){
       fprintf(fpi, "  ");
       fprintf(fpi, "O_RET ");
       print_region_helper(fpi, dest_i->region, dest_i->offset);
+      fprintf(fpi, "\n");
+      break;
+    case O_ADD:
+      fprintf(fpi, "  ");
+      fprintf(fpi, "O_ADD ");
+      print_region_helper(fpi, dest_i->region, dest_i->offset);
+      print_region_helper(fpi, src1_i->region, src1_i->offset);
+      print_region_helper(fpi, src2_i->region, src2_i->offset);
+      fprintf(fpi, "\n");
+      break;
+    case O_SUB:
+      fprintf(fpi, "  ");
+      fprintf(fpi, "O_SUB ");
+      print_region_helper(fpi, dest_i->region, dest_i->offset);
+      print_region_helper(fpi, src1_i->region, src1_i->offset);
+      print_region_helper(fpi, src2_i->region, src2_i->offset);
       fprintf(fpi, "\n");
       break;
     case D_PROC:
