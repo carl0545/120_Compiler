@@ -36,6 +36,7 @@
 
 #include <ctype.h>
 #include <stdio.h>
+#include <string.h>
 //#include "token.h"
 //#include "ytab.h"
 #include "120gram.h"
@@ -400,7 +401,7 @@ void handle_include()
     fname[strlen(fname)-1] = '\0';
     fname = strdup(fname);
 
-    FILE* input_file = fopen(fname, "r");
+    FILE  *input_file = fopen(fname, "r");
 
     if(!input_file) {
         fprintf(stderr, "Unable to open include file %s: ", fname);

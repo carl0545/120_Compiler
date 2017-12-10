@@ -59,9 +59,9 @@ int main(int argc, char *argv[]) {
     fprintf(stdout, "Opening: %s\n", argv[i]);
 
     yyparse();
-    treeprint(root, 0);
+    //treeprint(root, 0);
 
-    fprintf(stdout, "Populating Symbol Table...\n");
+    //fprintf(stdout, "Populating Symbol Table...\n");
     rootCpy = root;
     initGlobal();
     populateSymbolTable(rootCpy);
@@ -69,11 +69,11 @@ int main(int argc, char *argv[]) {
 
 
 
-    fprintf(stdout, "Performing Type Checking...\n");
+    //fprintf(stdout, "Performing Type Checking...\n");
     init_type();
     type_check(rootCpy);
 
-    fprintf(stdout, "Setting the size\n");
+    //fprintf(stdout, "Setting the size\n");
 
 
     init_imd_globals();
@@ -89,8 +89,8 @@ int main(int argc, char *argv[]) {
 
     //treeprint(rootCpy, 0);
 
-    printf("PRINTING SYMBOL TABLE SIZE\n\n\n");
-    printSize(global);
+    //printf("PRINTING SYMBOL TABLE SIZE\n\n\n");
+    //printSize(global);
 
 
     fclose(fp);

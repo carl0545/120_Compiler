@@ -67,7 +67,7 @@ void codeGen(struct tree *parseT){
     default:
       /* default is: concatenate our children's code */
       parseT->code = NULL;
-      printf("hmmm: %d\n", parseT->prodrule);
+      //printf("hmmm: %d\n", parseT->prodrule);
       for(i=0; i < parseT->nkids; i++){
          if(parseT->kids[i] == NULL){
             continue;
@@ -82,7 +82,7 @@ void codeGen(struct tree *parseT){
 
 void print_main(struct instr *head, FILE *fpi){
 
-  fprintf(fpi, ".global\n");
+  fprintf(fpi, ".data\n");
 
   global_print_helper(global, fpi);
 
@@ -398,7 +398,7 @@ void place_helper(struct tree *parseT){
     return;
   }
 
-  printf("OKAY ONE SEC: %s\n",parseT->leaf->text);
+  //printf("OKAY ONE SEC: %s\n",parseT->leaf->text);
 
   if(ident->base_type == FUNCTION_T)
     return;
@@ -408,7 +408,7 @@ void place_helper(struct tree *parseT){
 
   nOff = oldPlace->offset;
 
-  printf("OKAY WAIT A MINTE: %d\n", oldPlace->region);
+  //printf("OKAY WAIT A MINTE: %d\n", oldPlace->region);
   switch(oldPlace->region){
     case 0: //GLOBAL_H:
       nReg = R_GLOBAL;
@@ -586,10 +586,10 @@ int ht_set_size(struct hashtable_s *hashtable, int *local, int *global, int *par
           int size_c;
           size_c = ht_set_size(type_v->u.class.private, local, global, param, LOCAL_H);
 
-          printf("going into private:\n\n");
+          //printf("going into private:\n\n");
           type_v->place.region = currRegion;
           type_v->place.offset = getOffset(currRegion, global, local, param, size_c, &totalsize);
-          printf("coming out of private\n\n");
+          //printf("coming out of private\n\n");
         }
         break;
 
@@ -609,7 +609,7 @@ int ht_set_size(struct hashtable_s *hashtable, int *local, int *global, int *par
       entry_v = entry_v->next;
 
       type_w = entry_v->value;
-      printf("inside: %s: %d\n", entry_v->key, type_w->base_type);
+      //printf("inside: %s: %d\n", entry_v->key, type_w->base_type);
       type_v = type_w;
       switch(type_v->base_type){
           case INT_T:
@@ -651,10 +651,10 @@ int ht_set_size(struct hashtable_s *hashtable, int *local, int *global, int *par
             int size_c;
             size_c = ht_set_size(type_v->u.class.private, local, global, param, LOCAL_H);
 
-            printf("going into private:\n\n");
+            //printf("going into private:\n\n");
             type_v->place.region = currRegion;
             type_v->place.offset = getOffset(currRegion, global, local, param, size_c, &totalsize);
-            printf("coming out of private\n\n");
+            //printf("coming out of private\n\n");
           }
           break;
 

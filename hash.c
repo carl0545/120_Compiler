@@ -3,7 +3,7 @@
 */
 
 #include "hash.h"
-#include "string.h"
+#include <string.h>
 
 /*
 *Hash function for a string
