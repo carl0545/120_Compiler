@@ -95,7 +95,7 @@ struct entry_s *ht_newpair(char *key, struct type120 *value){
 /*
 *Insert an entry into the hash table
 */
-void ht_set(struct hashtable_s *hashtable, char *key, struct type120 *value){
+void ht_set(struct hashtable_s *hashtable, char *key, struct type120 *value, struct tree *parseT){
   int bin = 0;
 	struct entry_s *newpair = NULL;
 	struct entry_s *next = NULL;
@@ -105,8 +105,14 @@ void ht_set(struct hashtable_s *hashtable, char *key, struct type120 *value){
   if(hashtable->parent != NULL){
     //printf("HASH SET: not null\n");
     if(ht_get(hashtable->parent, key) != NULL){
-      fprintf(stderr, "Semantic Error: Cannot redeclare a variable made in global scope\n");
-      exit(3);
+      if(parseT == NULL){
+        fprintf(stderr, "Semantic Error: Cannot redeclare a variable made in global scope\n");
+        exit(3);
+      }
+      else{
+        fprintf(stderr, "Semantic Error %s: on line number: %d Cannot redeclare a variable made in global scope\n", parseT->leaf->filename, parseT->leaf->lineno);
+        exit(3);
+      }
     }
   }
   else{
@@ -125,8 +131,14 @@ void ht_set(struct hashtable_s *hashtable, char *key, struct type120 *value){
 
 	/* There's already a pair.  Let's replace that string. */
 	if( next != NULL && next->key != NULL && strcmp( key, next->key ) == 0 ) {
-    fprintf(stderr, "Semantic Error: Cannot redeclare a variable\n");
-    exit(3);
+    if(parseT == NULL){
+      fprintf(stderr, "Semantic Error: Cannot redeclare a variable\n");
+      exit(3);
+    }
+    else{
+      fprintf(stderr, "Semantic Error %s: on line number: %d Cannot redeclare a variable\n", parseT->leaf->filename, parseT->leaf->lineno);
+      exit(3);
+    }
 		//free( next->value );
 		//next->value = strdup( value );
 

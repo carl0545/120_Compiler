@@ -44,6 +44,6 @@ void shift_post_helper_2(struct tree*);//helper for postfix_expression-2 in shif
 void class_func_helper(struct tree*);//helper for func_param to deal with class functions
 
 bool arr_check(struct tree*);//check if in an array
-void type_compare(int operand, struct type120*, struct type120*); //checks to see if two types are the same
+void type_compare(int operand, struct type120*, struct type120*, struct tree*); //checks to see if two types are the same
 
 #endif

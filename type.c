@@ -85,7 +85,7 @@ void mult_param_helper(struct tree *parseT){
   }
 
   if(count_dec != count_defin){
-    fprintf(stderr, "Function: ''%s' doesn't have the appropriate amount of parameters\n", parseT->kids[0]->leaf->text);
+    fprintf(stderr, "TYPE ERROR %s: Function: ''%s' on line number: %d doesn't have the appropriate amount of parameters\n", parseT->kids[0]->leaf->filename, parseT->kids[0]->leaf->text, parseT->kids[0]->leaf->lineno);
     exit(3);
   }
 
@@ -97,7 +97,7 @@ void mult_param_helper(struct tree *parseT){
     check = ht_get(currScope, expressCheck->kids[2]->leaf->text);
     param = listGet(list_dec, k);
 
-    type_compare(-1, check, param);
+    type_compare(-1, check, param, expressCheck->kids[2]);
   }
 
 }
@@ -127,7 +127,7 @@ void mult_param_helper_c(struct tree *parseT){
   }
 
   if(count_dec != count_defin){
-    fprintf(stderr, "Function: ''%s' doesn't have the appropriate amount of parameters\n", parseT->kids[0]->leaf->text);
+    fprintf(stderr, "TYPE ERROR %s: Function: ''%s' on line number: %d doesn't have the appropriate amount of parameters\n", parseT->kids[0]->kids[2]->leaf->filename, parseT->kids[0]->kids[2]->leaf->text, parseT->kids[0]->kids[2]->leaf->lineno);
     exit(3);
   }
 
@@ -139,7 +139,7 @@ void mult_param_helper_c(struct tree *parseT){
     check = ht_get(currScope, expressCheck->kids[2]->leaf->text);
     param = listGet(list_dec, k);
 
-    type_compare(-1, check, param);
+    type_compare(-1, check, param, expressCheck->kids[2]);
   }
 
 }
@@ -155,7 +155,7 @@ void class_func_helper(struct tree *parseT){
   }
 
   if(strcmp(parseT->kids[2]->leaf->text, "main") == 0){
-    fprintf(stderr, "%s\n", "Main cannot be a paramter\n");
+    fprintf(stderr, "TYPE ERROR %s: on line number: %d In function: %s Main cannot be a paramater\n", parseT->kids[0]->kids[2]->leaf->filename, parseT->kids[0]->kids[2]->leaf->lineno, parseT->kids[0]->kids[2]->leaf->text);
     exit(3);
   }
 
@@ -169,7 +169,7 @@ void class_func_helper(struct tree *parseT){
   list_c = declared->u.function.parameters;
   param = list_c->next->type;
 
-  type_compare(-1, check, param);
+  type_compare(-1, check, param, parseT->kids[2]);
 
 
 }
@@ -194,7 +194,7 @@ void func_param(struct tree *parseT){
 
   //main check
   if(strcmp(parseT->kids[2]->leaf->text, "main") == 0){
-    fprintf(stderr, "%s\n", "Main cannot be a paramter\n");
+    fprintf(stderr, "TYPE ERROR %s: on line number: %d in function: %s  Main cannot be a paramter\n", parseT->kids[0]->leaf->filename, parseT->kids[0]->leaf->lineno, parseT->kids[0]->leaf->text);
     exit(3);
   }
 
@@ -204,7 +204,7 @@ void func_param(struct tree *parseT){
   list_c = declared->u.function.parameters;
   param = list_c->next->type;
 
-  type_compare(-1, check, param);
+  type_compare(-1, check, param, parseT->kids[2]);
 }
 
 void func_sig(struct tree *parseT){
@@ -213,7 +213,7 @@ void func_sig(struct tree *parseT){
   func_check = ht_get(currScope, parseT->leaf->text);
 
   if(func_check->base_type == FUNCTION_T){
-    fprintf(stderr, "SEMANTIC ERROR: Function '%s' has no parameters\n", parseT->leaf->text);
+    fprintf(stderr, "SEMANTIC ERROR %s: on line number: %d Function '%s' has no parameters\n", parseT->leaf->filename, parseT->leaf->lineno, parseT->leaf->text);
     exit(3);
   }
 }
@@ -293,7 +293,7 @@ void type_init_declarator(struct tree *parseT){
     right = ht_get(currScope, parseT->kids[1]->kids[1]->leaf->text);
   }
 
-  type_compare(-1, left, right);
+  type_compare(-1, left, right, parseT->kids[0]);
 }
 
 void type_init_mult(struct tree *parseT){
@@ -339,7 +339,7 @@ void type_relational_express(struct tree *parseT){
   }
 
 
-  type_compare(parseT->kids[1]->prodrule, left, right);
+  type_compare(parseT->kids[1]->prodrule, left, right, parseT->kids[0]);
 
 }
 
@@ -379,7 +379,7 @@ void type_array_check(struct tree *parseT){
   //array size check
 
   if(arr->u.array.size <= parseT->kids[0]->kids[2]->leaf->ival){
-    fprintf(stderr, "Array assignment out of bounds\n");
+    fprintf(stderr, "TYPE ERROR %s: on line number: %d Array assignment out of bounds\n", parseT->kids[0]->kids[0]->leaf->filename, parseT->kids[0]->kids[0]->leaf->lineno);
     exit(3);
   }
 
@@ -390,7 +390,7 @@ void type_array_check(struct tree *parseT){
   //printf("TESTING ARRAY: left: %d  right: %d\n", left->base_type, right->base_type);
   //exit(3);
 
-  type_compare(-1, left, right);
+  type_compare(-1, left, right, parseT->kids[2]);
 }
 
 void type_express_state(struct tree *parseT){
@@ -545,11 +545,11 @@ void type_shift_exp(struct tree *parseT){
     //check first stream variable
     struct type120* first_v = ht_get(currScope, parseT->kids[0]->leaf->text);
     if(first_v->base_type != CLASS_T){
-      fprintf(stderr, "Shift expression stream variable error\n" );
+      fprintf(stderr, "TYPE ERROR %s: on line number: %d Shift expression stream variable error\n", parseT->kids[0]->leaf->filename, parseT->kids[0]->leaf->lineno);
       exit(3);
     }
     if(strcmp(first_v->u.class.type, "stream") != 0){
-      fprintf(stderr, "Shift expression stream variable class error\n" );
+      fprintf(stderr, "TYPE ERROR %s: on line number: %d Shift expression stream variable error\n", parseT->kids[0]->leaf->filename, parseT->kids[0]->leaf->lineno);
       exit(3);
     }
   }
@@ -622,7 +622,7 @@ void type_postfix_exp_2(struct tree *parseT){
   member_v = ht_get(tempScope, parseT->kids[2]->leaf->text);
 
   right = member_v->u.function.elemtype;
-  type_compare(-1, left, right);
+  type_compare(-1, left, right, parseT->kids[2]);
 
 
 }
@@ -633,7 +633,7 @@ void type_postfix_exp(struct tree *parseT){
   left = ht_get(currScope, parseT->kids[0]->leaf->text);
   right = ht_get(currScope, parseT->kids[2]->kids[0]->leaf->text);
 
-  type_compare(-1, left, right);
+  type_compare(-1, left, right, parseT->kids[0]);
 }
 
 void type_mult_assign_exp(struct tree *parseT){
@@ -675,7 +675,7 @@ void mult_helper(struct tree *parseT, struct type120 *left){
         }
       }
       else{
-        type_compare(iter->kids[1]->prodrule, left, ht_get(currScope, iter->kids[0]->leaf->text));
+        type_compare(iter->kids[1]->prodrule, left, ht_get(currScope, iter->kids[0]->leaf->text), iter->kids[1]);
       }
     }
 
@@ -688,7 +688,7 @@ void mult_helper(struct tree *parseT, struct type120 *left){
       }
     }
     else if(iter->kids[2]->prodrule > 0){
-      type_compare(iter->kids[1]->prodrule, left, ht_get(currScope, iter->kids[2]->leaf->text));
+      type_compare(iter->kids[1]->prodrule, left, ht_get(currScope, iter->kids[2]->leaf->text), iter->kids[1]);
     }
     else{
       mult_helper(parseT->kids[2], left);
@@ -723,7 +723,7 @@ void mult_postfix_2_helper(struct tree *parseT, struct type120 *left, int oper){
   member_v = ht_get(tempScope, parseT->kids[2]->leaf->text);
 
   right = member_v->u.function.elemtype;
-  type_compare(oper, left, right);
+  type_compare(oper, left, right, parseT->kids[2]);
 }
 
 void mult_postfix_helper(struct tree *parseT, struct type120 *left, int oper){
@@ -731,7 +731,7 @@ void mult_postfix_helper(struct tree *parseT, struct type120 *left, int oper){
 
   right = ht_get(currScope, parseT->kids[0]->leaf->text);
 
-  type_compare(oper, left, right);
+  type_compare(oper, left, right, parseT->kids[0]);
 }
 
 void type_assign_exp(struct tree *parseT){
@@ -741,10 +741,10 @@ void type_assign_exp(struct tree *parseT){
     left = ht_get(currScope, parseT->kids[0]->leaf->text);
     right = ht_get(currScope, parseT->kids[2]->leaf->text);
 
-    type_compare(-1, left, right);
+    type_compare(-1, left, right, parseT->kids[0]);
 }
 
-void type_compare(int operand, struct type120 *type1, struct type120 *type2){
+void type_compare(int operand, struct type120 *type1, struct type120 *type2, struct tree *parseT){
     enum types leftT, rightT;
 
     leftT = type1->base_type;
@@ -766,8 +766,8 @@ void type_compare(int operand, struct type120 *type1, struct type120 *type2){
     }
 
     if(leftT != rightT){
-      fprintf(stderr, "Type Error: variable assignment doesn't matched declaration\n");
-      fprintf(stderr, "left: %d right: %d", type1->base_type, type2->base_type);
+      fprintf(stderr, "TYPE ERROR %s: on line number: %d: variable assignment doesn't match declaration\n", parseT->leaf->filename, parseT->leaf->lineno);
+      //fprintf(stderr, "left: %d right: %d", type1->base_type, type2->base_type);
       exit(3);
     }
 
@@ -780,7 +780,7 @@ void type_compare(int operand, struct type120 *type1, struct type120 *type2){
 
         }
         else{
-          fprintf(stderr, "Type Error: Operator/Operand error\n");
+          fprintf(stderr, "TYPE ERROR %s: on line number: %d Operator/Operand error\n", parseT->leaf->filename, parseT->leaf->lineno);
           fprintf(stderr, "Operator: %d Operand: %d\n", leftT, operand);
           exit(3);
         }
@@ -790,7 +790,7 @@ void type_compare(int operand, struct type120 *type1, struct type120 *type2){
 
         }
         else{
-          fprintf(stderr, "Type Error: Operator/Operand error\n");
+          fprintf(stderr, "TYPE ERROR %s: on line number: %d Operator/Operand error\n", parseT->leaf->filename, parseT->leaf->lineno);
           fprintf(stderr, "Operator: %d Operand: %d\n", leftT, operand);
           exit(3);
         }
@@ -800,7 +800,7 @@ void type_compare(int operand, struct type120 *type1, struct type120 *type2){
 
         }
         else{
-          fprintf(stderr, "Type Error: Operator/Operand error\n");
+          fprintf(stderr, "TYPE ERROR %s: on line number: %d Operator/Operand error\n", parseT->leaf->filename, parseT->leaf->lineno);
           fprintf(stderr, "Operator: %d Operand: %d\n", leftT, operand);
           exit(3);
         }
@@ -810,7 +810,7 @@ void type_compare(int operand, struct type120 *type1, struct type120 *type2){
 
         }
         else{
-          fprintf(stderr, "Type Error: Operator/Operand error\n");
+          fprintf(stderr, "TYPE ERROR %s: on line number: %d Operator/Operand error\n", parseT->leaf->filename, parseT->leaf->lineno);
           fprintf(stderr, "Operator: %d Operand: %d\n", leftT, operand);
           exit(3);
         }
@@ -820,7 +820,7 @@ void type_compare(int operand, struct type120 *type1, struct type120 *type2){
 
         }
         else{
-          fprintf(stderr, "Type Error: Operator/Operand error\n");
+          fprintf(stderr, "TYPE ERROR %s: on line number: %d Operator/Operand error\n", parseT->leaf->filename, parseT->leaf->lineno);
           fprintf(stderr, "Operator: %d Operand: %d\n", leftT, operand);
           exit(3);
         }
@@ -830,7 +830,7 @@ void type_compare(int operand, struct type120 *type1, struct type120 *type2){
 
         }
         else{
-          fprintf(stderr, "Type Error: Operator/Operand error\n");
+          fprintf(stderr, "TYPE ERROR %s: on line number: %d Operator/Operand error\n", parseT->leaf->filename, parseT->leaf->lineno);
           fprintf(stderr, "Operator: %d Operand: %d\n", leftT, operand);
           exit(3);
         }
@@ -840,7 +840,7 @@ void type_compare(int operand, struct type120 *type1, struct type120 *type2){
 
         }
         else{
-          fprintf(stderr, "Type Error: Operator/Operand error\n");
+          fprintf(stderr, "TYPE ERROR %s: on line number: %d Operator/Operand error\n", parseT->leaf->filename, parseT->leaf->lineno);
           fprintf(stderr, "Operator: %d Operand: %d\n", leftT, operand);
           exit(3);
         }

@@ -12,6 +12,7 @@ extern int yylex();
 extern int yylineno;
 extern char* yytext;
 extern FILE* yyin;
+extern char* filen;
 extern token *t;
 extern struct tree *root;
 extern struct hashtable_s *curr;
@@ -32,6 +33,7 @@ int main(int argc, char *argv[]) {
 
     FILE *fp = fopen(argv[i], "r");
     yyin = fp;
+    filen = argv[i];
 
     char name[100];
 

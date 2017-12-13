@@ -73,7 +73,7 @@ void populateSymbolTable(struct tree *parseT){
 
 void handle_identfier(struct tree *parseT){
   if(ht_get(curr, parseT->leaf->text) == NULL){
-    fprintf(stderr, "SEMANTIC ERROR: use of an undeclared var: %s\n", parseT->leaf->text);
+    fprintf(stderr, "SEMANTIC ERROR on file %s: use of an undeclared var: %s on line number: %d\n", parseT->leaf->filename, parseT->leaf->text, parseT->leaf->lineno);
     exit(3);
   }
 
@@ -110,7 +110,7 @@ void handle_literal(int literalE, struct tree *parseT){
   }
 
   if(ht_get(curr, name) == NULL){
-    ht_set(global, name, newType);
+    ht_set(global, name, newType, NULL);
   }
 
 }
@@ -122,7 +122,7 @@ void handle_literal(int literalE, struct tree *parseT){
 void handle_expr_state(struct tree *parseT){
   if(parseT->kids[0]->kids[0]->prodrule == postfix_expression){
     if(ht_get(curr, parseT->kids[0]->kids[0]->kids[0]->leaf->text) == NULL){
-      fprintf(stderr, "SEMANTIC ERROR: use of an undeclared var\n");
+      fprintf(stderr, "SEMANTIC ERROR %s: use of an undeclared var: %s on line number: %d\n", parseT->kids[0]->kids[0]->kids[0]->leaf->filename, parseT->kids[0]->kids[0]->kids[0]->leaf->text, parseT->kids[0]->kids[0]->kids[0]->leaf->lineno);
       exit(3);
     }
   }
@@ -131,7 +131,7 @@ void handle_expr_state(struct tree *parseT){
   }
   else{
     if(ht_get(curr, parseT->kids[0]->kids[0]->leaf->text) == NULL){
-      fprintf(stderr, "SEMANTIC ERROR: use of an undeclared var\n");
+      fprintf(stderr, "SEMANTIC ERROR %s: use of an undeclared var: %s on line number: %d\n", parseT->kids[0]->kids[0]->leaf->filename, parseT->kids[0]->kids[0]->leaf->text, parseT->kids[0]->kids[0]->leaf->lineno);
       exit(3);
     }
   }
@@ -170,9 +170,9 @@ void handle_init_list(struct tree *parseT){
         newV->pointer = false;
       }
       //printf("CURRENT TEXT: %s\n", iter->kids[0]->leaf->text);
-      ht_set(curr, iter->kids[0]->leaf->text, newV);
+      ht_set(curr, iter->kids[0]->leaf->text, newV, iter->kids[0]);
       //printf("CURRENT TEXT: %s\n", prev->kids[2]->kids[0]->leaf->text);
-      ht_set(curr, prev->kids[2]->kids[0]->leaf->text, newV);
+      ht_set(curr, prev->kids[2]->kids[0]->leaf->text, newV, prev->kids[2]->kids[0]);
     }
     else{
       newV->base_type = base;
@@ -184,7 +184,7 @@ void handle_init_list(struct tree *parseT){
       }
 
       //printf("CURRENT TEXT: %s\n", prev->kids[2]->kids[0]->leaf->text);
-      ht_set(curr, prev->kids[2]->kids[0]->leaf->text, newV);
+      ht_set(curr, prev->kids[2]->kids[0]->leaf->text, newV, prev->kids[2]->kids[0]);
     }
 
     //printf("YOYOYO\n");
@@ -219,7 +219,7 @@ void handle_class_spec(struct tree *parseT){
 
   curr = oldScope;
 
-  ht_set(curr, parseT->kids[0]->kids[1]->leaf->text, newType);
+  ht_set(curr, parseT->kids[0]->kids[1]->leaf->text, newType, parseT->kids[0]->kids[1]);
 
 
 
@@ -236,7 +236,7 @@ void handle_c_func_decl(struct tree *parseT){
 
   //no params
   if(parseT->kids[0]->kids[1]->kids[2] == NULL){
-    ht_set(curr, parseT->kids[0]->kids[1]->kids[0]->leaf->text, funcVar);
+    ht_set(curr, parseT->kids[0]->kids[1]->kids[0]->leaf->text, funcVar, parseT->kids[0]->kids[1]->kids[0]);
   }
   else if(parseT->kids[0]->kids[1]->kids[2]->prodrule == parameter_declaration){
     //one param
@@ -254,7 +254,7 @@ void handle_c_func_decl(struct tree *parseT){
 
     add(&funcVar->u.function.parameters, param);
 
-    ht_set(curr, parseT->kids[0]->kids[1]->kids[0]->leaf->text, funcVar);
+    ht_set(curr, parseT->kids[0]->kids[1]->kids[0]->leaf->text, funcVar, parseT->kids[0]->kids[1]->kids[0]);
 
   }
   else if(parseT->kids[0]->kids[1]->kids[2]->prodrule == parameter_declaration_list){
@@ -300,7 +300,7 @@ void handle_c_func_decl(struct tree *parseT){
 
     }
 
-    ht_set(curr, parseT->kids[0]->kids[1]->kids[0]->leaf->text, funcVar);
+    ht_set(curr, parseT->kids[0]->kids[1]->kids[0]->leaf->text, funcVar, parseT->kids[0]->kids[1]->kids[0]);
     //exit(3);
 
   }
@@ -318,7 +318,7 @@ void handle_c_func_decl_inner(struct tree *parseT){
 
   //no params
   if(parseT->kids[1]->kids[2] == NULL){
-    ht_set(curr, parseT->kids[1]->kids[0]->leaf->text, funcVar);
+    ht_set(curr, parseT->kids[1]->kids[0]->leaf->text, funcVar, parseT->kids[1]->kids[0]);
   }
   else if(parseT->kids[1]->kids[2]->prodrule == parameter_declaration){
     //one param
@@ -336,7 +336,7 @@ void handle_c_func_decl_inner(struct tree *parseT){
 
     add(&funcVar->u.function.parameters, param);
 
-    ht_set(curr, parseT->kids[1]->kids[0]->leaf->text, funcVar);
+    ht_set(curr, parseT->kids[1]->kids[0]->leaf->text, funcVar, parseT->kids[1]->kids[0]);
 
   }
   else if(parseT->kids[1]->kids[2]->prodrule == parameter_declaration_list){
@@ -382,7 +382,7 @@ void handle_c_func_decl_inner(struct tree *parseT){
 
     }
 
-    ht_set(curr, parseT->kids[1]->kids[0]->leaf->text, funcVar);
+    ht_set(curr, parseT->kids[1]->kids[0]->leaf->text, funcVar,parseT->kids[1]->kids[0]);
     //exit(3);
 
   }
@@ -437,7 +437,7 @@ void handle_c_func_decl_constr(struct tree *parseT){
 
   //no params
   if(parseT->kids[0]->kids[2] == NULL){
-    ht_set(curr, parseT->kids[0]->kids[0]->leaf->text, funcVar);
+    ht_set(curr, parseT->kids[0]->kids[0]->leaf->text, funcVar, parseT->kids[0]->kids[0]);
   }
   else if(parseT->kids[0]->kids[2]->prodrule == parameter_declaration){
     //one param
@@ -455,7 +455,7 @@ void handle_c_func_decl_constr(struct tree *parseT){
 
     add(&funcVar->u.function.parameters, param);
 
-    ht_set(curr, parseT->kids[0]->kids[0]->leaf->text, funcVar);
+    ht_set(curr, parseT->kids[0]->kids[0]->leaf->text, funcVar, parseT->kids[0]->kids[0]);
 
   }
   else if(parseT->kids[0]->kids[2]->prodrule == parameter_declaration_list){
@@ -501,7 +501,7 @@ void handle_c_func_decl_constr(struct tree *parseT){
 
     }
 
-    ht_set(curr, parseT->kids[0]->kids[0]->leaf->text, funcVar);
+    ht_set(curr, parseT->kids[0]->kids[0]->leaf->text, funcVar, parseT->kids[0]->kids[0]);
     //exit(3);
 
   }
@@ -562,7 +562,7 @@ void handle_c_array_decl(struct tree *parseT){
 
   newType->u.array.elemtype = innerType;
 
-  ht_set(curr, parseT->kids[0]->kids[1]->kids[0]->leaf->text, newType);
+  ht_set(curr, parseT->kids[0]->kids[1]->kids[0]->leaf->text, newType, parseT->kids[0]->kids[1]->kids[0]);
 
 
 
@@ -588,7 +588,7 @@ void handle_member_spec1(struct tree *parseT, struct type120 *newType){
     //printf("CLASS variable dec\n");
     struct type120 *classVar = malloc(sizeof(struct type120));
     classVar->base_type = find_base_type(parseT->kids[0]->kids[0]->leaf->category);
-    ht_set(curr, parseT->kids[0]->kids[1]->leaf->text, classVar);
+    ht_set(curr, parseT->kids[0]->kids[1]->leaf->text, classVar, parseT->kids[0]->kids[1]);
   }
   else{
     fprintf(stderr, "ERROR IN handle_member_spec1\n");
@@ -764,7 +764,7 @@ void handle_func_def(struct tree *parseT){
       mainT->base_type = FUNCTION_T;
       mainT->pointer = false;
 
-      ht_set(curr, "main", mainT);
+      ht_set(curr, "main", mainT, NULL);
     }
   }
 
@@ -772,13 +772,13 @@ void handle_func_def(struct tree *parseT){
     //check if has been declared
     if(pointerCheck == false){
       if(ht_get(curr, parseT->kids[1]->kids[0]->leaf->text) == NULL && strcmp(parseT->kids[1]->kids[0]->leaf->text, "main") != 0){
-        fprintf(stderr, "SEMANTIC ERROR: Function has not been declared before defintion\n");
+        fprintf(stderr, "SEMANTIC ERROR %s: Function: %s on line number: %d has not been declared before definition\n", parseT->kids[1]->kids[0]->leaf->filename, parseT->kids[1]->kids[0]->leaf->text, parseT->kids[1]->kids[0]->leaf->lineno);
         exit(3);
       }
     }
     else{
       if(ht_get(curr, parseT->kids[1]->kids[1]->kids[0]->leaf->text) == NULL && strcmp(parseT->kids[1]->kids[0]->leaf->text, "main") != 0){
-        fprintf(stderr, "SEMANTIC ERROR: Function has not been declared before defintion\n");
+        fprintf(stderr, "SEMANTIC ERROR %s: Function: %s on line number: %d has not been declared before definition\n", parseT->kids[1]->kids[1]->kids[0]->leaf->filename, parseT->kids[1]->kids[1]->kids[0]->leaf->text, parseT->kids[1]->kids[1]->kids[0]->leaf->lineno);
         exit(3);
       }
     }
@@ -992,7 +992,7 @@ void handle_init_decl(struct tree *parseT){
     newType->pointer = false;
 
 
-    ht_set(curr, parseT->kids[1]->kids[0]->leaf->text, newType);
+    ht_set(curr, parseT->kids[1]->kids[0]->leaf->text, newType, parseT->kids[1]->kids[0]);
     //printf("adding a variable\n");
 
     return;
@@ -1032,7 +1032,7 @@ void handle_init_decl(struct tree *parseT){
         if(parseT->kids[1]->kids[0]->kids[0]->leaf->category == MUL){
           newType->base_type = find_base_type(parseT->kids[0]->leaf->category);
           newType->pointer = true;
-          ht_set(curr, parseT->kids[1]->kids[0]->kids[1]->leaf->text, newType);
+          ht_set(curr, parseT->kids[1]->kids[0]->kids[1]->leaf->text, newType, parseT->kids[1]->kids[0]->kids[1]);
           break;
         }
       default:
@@ -1067,7 +1067,7 @@ void handle_arr_decl(struct tree* parseT, struct type120* type){
 
   type->u.array.elemtype = elem;
 
-  ht_set(curr, parseT->kids[1]->kids[0]->kids[0]->leaf->text, type);
+  ht_set(curr, parseT->kids[1]->kids[0]->kids[0]->leaf->text, type, parseT->kids[1]->kids[0]->kids[0]);
 
 }
 
@@ -1107,7 +1107,7 @@ void handle_func_decl(struct tree *parseT, struct type120 *type, bool pointer, b
     //add(&type->u.function.parameters, param);
 
     if(set == true){
-      ht_set(curr, checker->kids[0]->leaf->text, type);
+      ht_set(curr, checker->kids[0]->leaf->text, type, checker->kids[0]);
     }
     return;
 
@@ -1131,7 +1131,7 @@ void handle_func_decl(struct tree *parseT, struct type120 *type, bool pointer, b
     add(&type->u.function.parameters, param);
 
     if(set == true){
-      ht_set(curr, checker->kids[0]->leaf->text, type);
+      ht_set(curr, checker->kids[0]->leaf->text, type, checker->kids[0]);
     }
     //ht_set(curr, checker->kids[0]->leaf->text, type);
     return;
@@ -1183,7 +1183,7 @@ void handle_func_decl(struct tree *parseT, struct type120 *type, bool pointer, b
 
 
     if(set == true){
-      ht_set(curr, checker->kids[0]->leaf->text, type);
+      ht_set(curr, checker->kids[0]->leaf->text, type, checker->kids[0]);
       //printf("\n\nTEST: %s", checker->kids[0]->leaf->text);
     }
     //ht_set(curr, parseT->kids[1]->kids[0]->kids[0]->leaf->text, type);
@@ -1191,7 +1191,7 @@ void handle_func_decl(struct tree *parseT, struct type120 *type, bool pointer, b
 
   }
   else{
-    fprintf(stderr, "%s\n", "Semantic Error");
+    //fprintf(stderr, "%s\n", "Semantic Error");
     exit(3);
   }
 
@@ -1213,7 +1213,7 @@ void initGlobal(){
 
     class->u.class.type = "string";
 
-    ht_set(global, "string", class);
+    ht_set(global, "string", class, NULL);
   }
 
   if(typenametable_lookup("ifstream") ==  CLASS_NAME){
@@ -1223,7 +1223,7 @@ void initGlobal(){
 
     class->u.class.type = "stream";
 
-    ht_set(global, "ifstream", class);
+    ht_set(global, "ifstream", class, NULL);
   }
 
   if(typenametable_lookup("ofstream") ==  CLASS_NAME){
@@ -1233,7 +1233,7 @@ void initGlobal(){
 
     class->u.class.type = "stream";
 
-    ht_set(global, "ofstream", class);
+    ht_set(global, "ofstream", class, NULL);
 
   }
 
@@ -1255,9 +1255,9 @@ void initGlobal(){
     endl->base_type = CHAR_T;
     endl->pointer = true;
 
-    ht_set(global, "cout", cout);
-    ht_set(global, "cin", cin);
-    ht_set(global, "endl", endl);
+    ht_set(global, "cout", cout, NULL);
+    ht_set(global, "cin", cin, NULL);
+    ht_set(global, "endl", endl, NULL);
 
   }
 
@@ -1289,7 +1289,7 @@ int find_base_type(int token){
       break;
     default:
     //check for defined other types
-    fprintf(stderr, "%s\n", "Variable declaration has an unregonized type" );
+    //fprintf(stderr, "%s\n", "Variable declaration has an unregonized type" );
     exit(3);
   }
 

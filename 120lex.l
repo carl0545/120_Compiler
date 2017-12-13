@@ -63,7 +63,7 @@ void push_stack(Stack*,int,char*);
 void init_stack(Stack*);
 
 token *t;
-char *filename = "test";
+char *filen;
 
 Stack includeStack;
 int initStackFlag = 0;
@@ -265,7 +265,7 @@ yywrap(void)
   // Grab the previous input file from the state stack.
   yypop_buffer_state();
   StructState state = pop_stack(&includeStack);
-  filename = state.name;
+  filen = state.name;
   lineno = state.line_num;
   return 0;
 
@@ -368,11 +368,12 @@ static int createtoken(int cat)
 
   yylval.node->leaf->category = cat;
   yylval.node->prodrule = cat;
+  yylval.node->leaf->filename = filen;
 
   yylval.node->leaf->text = (char *) calloc(1, strlen(yytext)+1);
   strcpy(yylval.node->leaf->text, yytext);
 
-  yylval.node->leaf->lineno = yylineno;
+  yylval.node->leaf->lineno = lineno;
 
   //ival, dval, sval functionality
   if(cat == ICON){
@@ -412,7 +413,7 @@ void handle_include()
     yypush_buffer_state(yy_create_buffer(input_file, YY_BUF_SIZE));
     // Push "auxiliary" file data.
     push_stack(&includeStack, lineno, "test2");
-    filename = fname;
+    filen = fname;
     lineno = 1;
 
 
