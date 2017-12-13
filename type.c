@@ -182,20 +182,27 @@ void func_param(struct tree *parseT){
     return;
   }
 
+  if(parseT->kids[2] == NULL){
+    return;
+  }
+
   if(parseT->kids[0]->prodrule == postfix_expression-2){
     class_func_helper(parseT);
     return;
   }
 
-  if(parseT->kids[2]->prodrule == expression_list){
-    mult_param_helper(parseT);
-    return;
+  if(parseT->kids[2] != NULL){
+    if(parseT->kids[2]->prodrule == expression_list){
+      mult_param_helper(parseT);
+      return;
+    }
   }
-
   //main check
+  if(parseT->kids[2] != NULL){
   if(strcmp(parseT->kids[2]->leaf->text, "main") == 0){
     fprintf(stderr, "TYPE ERROR %s: on line number: %d in function: %s  Main cannot be a paramter\n", parseT->kids[0]->leaf->filename, parseT->kids[0]->leaf->lineno, parseT->kids[0]->leaf->text);
     exit(3);
+  }
   }
 
   declared = ht_get(currScope, parseT->kids[0]->leaf->text);
@@ -204,7 +211,7 @@ void func_param(struct tree *parseT){
   list_c = declared->u.function.parameters;
   param = list_c->next->type;
 
-  type_compare(-1, check, param, parseT->kids[2]);
+  type_compare(-1, check, param, parseT->kids[0]);
 }
 
 void func_sig(struct tree *parseT){

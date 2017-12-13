@@ -20,6 +20,16 @@ void codeGen(struct tree *parseT){
       parseT->code = concat(parseT->kids[2]->code, gen(O_ASN, parseT->kids[0]->place, parseT->kids[2]->place, NULL));
       break;
 
+    case init_declarator:
+      parseT->place = parseT->kids[0]->place;
+      if(parseT->kids[1] == NULL){
+        break;
+      }
+      else if(parseT->kids[1]->prodrule == initializer){
+        parseT->code = concat(parseT->kids[1]->kids[1]->code, gen(O_ASN, parseT->kids[0]->place, parseT->kids[1]->kids[1]->place, NULL));
+        break;
+      }
+
     case jump_statement:
       parseT->code = concat(parseT->kids[1]->code, gen(O_RET, parseT->kids[1]->place, NULL, NULL));
       break;

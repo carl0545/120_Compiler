@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
     fprintf(stdout, "Opening: %s\n", argv[i]);
 
     yyparse();
-    //treeprint(root, 0);
+    treeprint(root, 0);
 
     //fprintf(stdout, "Populating Symbol Table...\n");
     rootCpy = root;
@@ -78,6 +78,7 @@ int main(int argc, char *argv[]) {
     //fprintf(stdout, "Setting the size\n");
 
 
+
     init_imd_globals();
     ht_set_size(global, &global_r_counter, &local_r_counter , &param_r_counter, GLOBAL_H);
     gen_first(rootCpy);
@@ -88,6 +89,8 @@ int main(int argc, char *argv[]) {
     codeGen(rootCpy);
 
     print_main(rootCpy->code, interF);
+
+    
 
     //treeprint(rootCpy, 0);
 
